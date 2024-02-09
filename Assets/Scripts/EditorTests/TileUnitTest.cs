@@ -15,25 +15,25 @@ public class TileUnitTest
         
         State grass = new State();
         grass.name = "Grass";
-        grass.spawnChance = 0.5f;
+        grass.SpawnWeight = 0.5f;
 
         Assert.AreEqual("Grass", grass.name);
 
         State shrubs = new State();
         shrubs.name = "Shrubs";
-        shrubs.spawnChance = 0.4f;
+        shrubs.SpawnWeight = 0.4f;
 
         State trees = new State();
         trees.name = "Trees";
-        trees.spawnChance = 0.1f;
+        trees.SpawnWeight = 0.1f;
 
         State abyss = new State();
         abyss.name = "Void";
-        abyss.spawnChance =0.9f;
+        abyss.SpawnWeight =0.9f;
 
         State unknown = new State();
         unknown.name = "";
-        unknown.spawnChance = 1f;
+        unknown.SpawnWeight = 1f;
 
         abyss.allowedNeighbours = new[] { abyss };
         grass.allowedNeighbours = new[] { grass, shrubs };

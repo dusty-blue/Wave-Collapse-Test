@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEditor.VersionControl.Asset;
 
 namespace Assets.Scripts.WFC
 {
@@ -13,17 +14,19 @@ namespace Assets.Scripts.WFC
     {
         //make scriptable object
         public string name;
-        public float spawnChance;
+        public float SpawnWeight;
         public State[] allowedNeighbours;
     }
     public class Tile
     {
         public State currentState;
         public State[] possibleStates;
+        public AliasSampling rnd;
         public Tile(State[] states, State starting )
         {
             possibleStates = states;
             currentState = starting;
+            rnd = new AliasSampling(states.Select(x => x.SpawnWeight).ToList<float>());
         }
         public Tile(State starting)
         {
@@ -35,7 +38,7 @@ namespace Assets.Scripts.WFC
             float sum = 0;
             foreach(State s in possibleStates)
             {
-                sum += s.spawnChance;
+                sum += s.SpawnWeight;
             }
             return sum;
         }
@@ -45,9 +48,8 @@ namespace Assets.Scripts.WFC
         }
         public void SelectCurrentState()
         {
-            System.Random rdm = new System.Random();
-            currentState = possibleStates[rdm.Next(possibleStates.Length)]; //TO DO consider spawnrates
-
+            rnd = new AliasSampling(possibleStates.Select(x => x.SpawnWeight).ToList<float>());
+            currentState = possibleStates[rnd.DrawSample()]; 
         }
     }
 
@@ -69,7 +71,7 @@ namespace Assets.Scripts.WFC
         {
             State grass = new State();
             grass.name = "Grass";
-            grass.spawnChance = 0.5f;
+            grass.SpawnWeight = 0.5f;
             TileMatrix = new Tile[size.x, size.y];
 
             for(int i = 0; i < TileMatrix.GetLength(0); i++)

@@ -17,17 +17,17 @@ public class StateUnitTest
         // Use the Assert class to test conditions
         State grass = new State();
         grass.name = "Grass";
-        grass.spawnChance =0.5f;
+        grass.SpawnWeight =0.5f;
 
         Assert.AreEqual("Grass", grass.name);
 
         State shrubs = new State();
         shrubs.name = "Shrubs";
-        shrubs.spawnChance = 0.4f;
+        shrubs.SpawnWeight = 0.4f;
         
         State trees = new State();
         trees.name = "Trees";
-        trees.spawnChance = 0.1f;
+        trees.SpawnWeight = 0.1f;
 
         grass.allowedNeighbours = new[] { grass, shrubs };
         shrubs.allowedNeighbours = new[] { grass, shrubs ,trees};

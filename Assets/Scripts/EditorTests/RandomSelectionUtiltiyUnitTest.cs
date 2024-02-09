@@ -5,7 +5,6 @@ using Assets.Scripts.WFC;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-
 public class RandomSelectionUtiltiyUnitTest
 {
     public class TSingleAdd : RejectionSamplingAddSingle
@@ -118,6 +117,15 @@ public class RandomSelectionUtiltiyUnitTest
         AliasSampling tAlias = new AliasSampling(simpleDistr);
 
         Assert.IsInstanceOf<int>(tAlias.DrawSample());
+
+        List<float> improperDistr = new List<float>();
+        improperDistr.Add(50f);
+        improperDistr.Add(20f);
+
+        AliasSampling tAlias2 = new AliasSampling(improperDistr);
+        int s = tAlias2.DrawSample();
+
+        Assert.That(s >= 0 && s < improperDistr.Count);
     }
 
     [Test]
@@ -136,5 +144,21 @@ public class RandomSelectionUtiltiyUnitTest
     }
 
 
+    [Test]
+    public void statisticalTest()
+    {
+        List<float> simpleDistr = new List<float>();
+        simpleDistr.Add(0.5f);
+        simpleDistr.Add(0.5f);
+        AliasSampling tAlias = new AliasSampling(simpleDistr);
+
+        int results = 0;
+        for(int i =0; i<100; i++)
+        {
+            results += tAlias.DrawSample();
+        }
+        UnityEngine.Debug.Log(results);
+
+    }
 
 }
