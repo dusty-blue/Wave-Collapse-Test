@@ -161,7 +161,7 @@ Transform:
   m_GameObject: {fileID: 104987957}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -288,7 +288,7 @@ Transform:
   m_GameObject: {fileID: 1244263308}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -9.69, y: -3.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -307,12 +307,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_tilemap: {fileID: 1244263312}
-  rock: {fileID: 21300000, guid: 5047ae69010b5c14a9e6e4eb0d8e3695, type: 3}
-  paper: {fileID: 21300000, guid: eb6201b907db5de46ab7e0efc42a1519, type: 3}
-  scissor: {fileID: 21300000, guid: 8cd2425eaa439b34c9eada49115fdb3d, type: 3}
+  rock: {fileID: 21300000, guid: 6094e47cff81e234286f7ed0d62ebe64, type: 3}
+  paper: {fileID: 21300000, guid: 6b4e24e05ae4ecb44b5cfc94ee57112f, type: 3}
+  scissor: {fileID: 21300000, guid: 396878e29810bcf4dbecc2af2015b77b, type: 3}
+  entropyThreshold: 0.9
+  rockWeight: 0.5
+  paperWeight: 0.5
+  scissorWeight: 0.6
   area:
     m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 5, y: 5, z: 1}
+    m_Size: {x: 20, y: 12, z: 1}
 --- !u!483693784 &1244263311
 TilemapRenderer:
   m_ObjectHideFlags: 0

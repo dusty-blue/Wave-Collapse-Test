@@ -8,42 +8,36 @@ using Assets.Scripts.WFC;
 public class TileUnitTest
 {
     // A Test behaves as an ordinary method
+    public class TestTile: WFCTile
+    {
+        public TestTile(State[] states, State starting) : base(states, starting)
+        {
+        }
+    }
     [Test]
     public void TileUnitTestSimplePasses()
     {
         // Use the Assert class to test conditions
-        
-        State grass = new State();
-        grass.name = "Grass";
-        grass.SpawnWeight = 0.5f;
 
-        Assert.AreEqual("Grass", grass.name);
+        State grass = new State("Grass", 0.5f);
 
-        State shrubs = new State();
-        shrubs.name = "Shrubs";
-        shrubs.SpawnWeight = 0.4f;
+        State shrubs = new State("Shrubs", 0.4f);
 
-        State trees = new State();
-        trees.name = "Trees";
-        trees.SpawnWeight = 0.1f;
+        State trees = new State("Trees", 0.1f);
 
-        State abyss = new State();
-        abyss.name = "Void";
-        abyss.SpawnWeight =0.9f;
+        State abyss = new State("Void", 0.9f);
 
-        State unknown = new State();
-        unknown.name = "";
-        unknown.SpawnWeight = 1f;
+        State unknown = new State("", 1f);
 
-        abyss.allowedNeighbours = new[] { abyss };
-        grass.allowedNeighbours = new[] { grass, shrubs };
-        shrubs.allowedNeighbours = new[] { grass, shrubs, trees };
-        trees.allowedNeighbours = new[] { shrubs };
+        abyss.m_allowedNeighbours = new[] { abyss };
+        grass.m_allowedNeighbours = new[] { grass, shrubs };
+        shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
+        trees.m_allowedNeighbours = new[] { shrubs };
 
-        Tile fluxTile = new Tile(new[] { abyss, grass, shrubs, trees }, unknown);
+        WFCTile fluxTile = new WFCTile(new[] { abyss, grass, shrubs, trees }, unknown);
 
-        Tile abyssTile = new Tile(abyss);
-        Assert.AreEqual(0.9f, abyssTile.getEntropy());
+        WFCTile abyssTile = new WFCTile(abyss);
+        Assert.AreEqual(-0.9f, abyssTile.getEntropy());
         Assert.AreEqual(1.9f, fluxTile.getEntropy());
 
         fluxTile.updateStates(new[] { shrubs, trees });

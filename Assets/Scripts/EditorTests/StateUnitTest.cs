@@ -15,33 +15,27 @@ public class StateUnitTest
     public void StateUnitTestSimplePasses()
     {
         // Use the Assert class to test conditions
-        State grass = new State();
-        grass.name = "Grass";
-        grass.SpawnWeight =0.5f;
+        State grass = new State("Grass", 0.5f);
 
-        Assert.AreEqual("Grass", grass.name);
+        Assert.AreEqual("Grass", grass.m_name);
 
-        State shrubs = new State();
-        shrubs.name = "Shrubs";
-        shrubs.SpawnWeight = 0.4f;
+        State shrubs = new State("Shrubs", 0.4f );
         
-        State trees = new State();
-        trees.name = "Trees";
-        trees.SpawnWeight = 0.1f;
+        State trees = new State("Trees", 0.1f);
 
-        grass.allowedNeighbours = new[] { grass, shrubs };
-        shrubs.allowedNeighbours = new[] { grass, shrubs ,trees};
-        trees.allowedNeighbours = new []{ shrubs};
+        grass.m_allowedNeighbours = new[] { grass, shrubs };
+        shrubs.m_allowedNeighbours = new[] { grass, shrubs ,trees};
+        trees.m_allowedNeighbours = new []{ shrubs};
 
-        Assert.IsNotNull(shrubs.allowedNeighbours);
-        Assert.IsNotNull(trees.allowedNeighbours);
-        Assert.IsNotNull(grass.allowedNeighbours);
-        Assert.AreEqual(2, grass.allowedNeighbours.Length);
-        Assert.AreEqual(3, shrubs.allowedNeighbours.Length);
-        Assert.AreEqual(1, trees.allowedNeighbours.Length);
-        Assert.Contains(grass, grass.allowedNeighbours);
+        Assert.IsNotNull(shrubs.m_allowedNeighbours);
+        Assert.IsNotNull(trees.m_allowedNeighbours);
+        Assert.IsNotNull(grass.m_allowedNeighbours);
+        Assert.AreEqual(2, grass.m_allowedNeighbours.Length);
+        Assert.AreEqual(3, shrubs.m_allowedNeighbours.Length);
+        Assert.AreEqual(1, trees.m_allowedNeighbours.Length);
+        Assert.Contains(grass, grass.m_allowedNeighbours);
 
-        Assert.Contains(grass, grass.allowedNeighbours[1].allowedNeighbours);
+        Assert.Contains(grass, grass.m_allowedNeighbours[1].m_allowedNeighbours);
 
         
         // TO DO?

@@ -63,7 +63,6 @@ public class RandomSelectionUtiltiyUnitTest
     [Test]
     public void RandomSelectionUtiltiyUnitTestSubTableLarge()
     {
-        
         Dictionary<int, float> simpleDistr = new Dictionary<int, float>();
         simpleDistr.Add(0, 0.000001f);
         simpleDistr.Add(1, 1f - 0.000001f);
@@ -138,7 +137,7 @@ public class RandomSelectionUtiltiyUnitTest
         AliasSampling tAlias = new AliasSampling(simpleDistr);
 
         sw.Stop();
-        UnityEngine.Debug.Log($"alias took {sw.ElapsedMilliseconds}ms to run.");
+        //UnityEngine.Debug.Log($"alias took {sw.ElapsedMilliseconds}ms to run.");
 
         Assert.IsInstanceOf<int>(tAlias.DrawSample());
     }
@@ -157,7 +156,7 @@ public class RandomSelectionUtiltiyUnitTest
         {
             results += tAlias.DrawSample();
         }
-        UnityEngine.Debug.Log(results);
+        //UnityEngine.Debug.Log(results);
 
     }
 

@@ -6,7 +6,7 @@ namespace Assets.Scripts.WFC
 {
     public class AliasSampling
     {
-        private List<float> U;
+        private List<float> U,P;
         private List<int> K;
         private Random rnd;
         public AliasSampling(List<float> distr)
@@ -15,12 +15,15 @@ namespace Assets.Scripts.WFC
 
             float sum = distr.Sum();
             int n = distr.Count();
+            P = new List<float>(n);
             U = new List<float>(n);
             K = new List<int>(n);
-            
+            float p_i;
             for(int i =0; i<n; i++)
             {
-                U.Add( (distr[i] * n)/sum );
+                p_i = (distr[i] * n) / sum;
+                P.Add(p_i);
+                U.Add( p_i );
                 K.Add(-1);
             }
 
@@ -28,7 +31,7 @@ namespace Assets.Scripts.WFC
             int largeL=0, smallS=0;
             for(int j =0; j < n; j++)
             {
-                if (U[j]> 1f)
+                if (P[j]> 1f)
                 {
                     largeL = j;l++;
                 } else
@@ -44,8 +47,9 @@ namespace Assets.Scripts.WFC
                 l--;
                 k = largeL;
                 K[jay] =k;
-                U[k] = U[k] + U[jay] - 1f;
-                if (U[k]>1f)
+                U[jay] = P[jay];
+                P[k] =P[k] + P[jay] - 1f;
+                if (P[k]>1f)
                 {
                     largeL = k; l++;
                 } else
@@ -76,6 +80,10 @@ namespace Assets.Scripts.WFC
                 return i;
             } else
             {
+                if (K[i]<0)
+                {
+                    return i;
+                }
                 return K[i];
             }
 

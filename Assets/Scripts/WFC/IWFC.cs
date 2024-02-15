@@ -6,143 +6,147 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using static UnityEditor.VersionControl.Asset;
 
 namespace Assets.Scripts.WFC
 {
-    public class State
-    {
-        //make scriptable object
-        public string name;
-        public float SpawnWeight;
-        public State[] allowedNeighbours;
-    }
-    public class Tile
-    {
-        public State currentState;
-        public State[] possibleStates;
-        public AliasSampling rnd;
-        public Tile(State[] states, State starting )
-        {
-            possibleStates = states;
-            currentState = starting;
-            rnd = new AliasSampling(states.Select(x => x.SpawnWeight).ToList<float>());
-        }
-        public Tile(State starting)
-        {
-            currentState = starting;
-            possibleStates = starting.allowedNeighbours;
-        }
-        public float getEntropy()
-        {
-            float sum = 0;
-            foreach(State s in possibleStates)
-            {
-                sum += s.SpawnWeight;
-            }
-            return sum;
-        }
-        public void updateStates(State[] neighbours)
-        {
-            possibleStates = neighbours.Intersect(possibleStates).ToArray();
-        }
-        public void SelectCurrentState()
-        {
-            rnd = new AliasSampling(possibleStates.Select(x => x.SpawnWeight).ToList<float>());
-            currentState = possibleStates[rnd.DrawSample()]; 
-        }
-    }
-
-
     public interface IWFC
     {
 
         //State[,] StateMatrix { get; }
         void UpdateTiles();
-        public Tile GetTile(Vector3Int index);
-        float EntropyThreshold {get;set;} 
-    }
+        public WFCTile GetTile(Vector3Int index);
+        }
 
     public class WFC_Matrix : IWFC
     {
-        Tile[,] TileMatrix;
-        
-        WFC_Matrix(BoundsInt size)
+        protected WFCTile[,] TileMatrix;
+
+        private float m_ET;
+
+        public Vector3Int lastUpdatedPosition;
+        public float entropyThreshold {
+            get { return this.m_ET; } 
+            set { this.m_ET = value; }
+        }
+
+
+        public WFC_Matrix(BoundsInt bounds)
         {
-            State grass = new State();
-            grass.name = "Grass";
-            grass.SpawnWeight = 0.5f;
-            TileMatrix = new Tile[size.x, size.y];
+            State grass = new State("Grass", 0.5f);
+            int xSize = Math.Abs(bounds.xMax - bounds.xMin);
+            int ySize = Math.Abs(bounds.yMax - bounds.yMin);
+
+            TileMatrix = new WFCTile[xSize, ySize];
 
             for(int i = 0; i < TileMatrix.GetLength(0); i++)
             {
                 for (int j = 0; j < TileMatrix.GetLength(1); j++)
                 {
-                    TileMatrix[i, j] = new Tile(new[] { grass }, grass);
+                    TileMatrix[i, j] = new WFCTile(new[] { grass }, grass);
                     //TO DO Constructor and States
                 }
             }
         }
 
-        public float EntropyThreshold { get => EntropyThreshold; set => EntropyThreshold = value; }
+        public WFC_Matrix(BoundsInt bounds, WFCTile defaultTile, float EntropyT)
+        {
+            
+            int xSize = Math.Abs(bounds.xMax - bounds.xMin);
+            int ySize = Math.Abs(bounds.yMax - bounds.yMin);
 
-        public Tile GetTile(Vector3Int index)
+            TileMatrix = new WFCTile[xSize, ySize];
+
+            for (int i = 0; i < TileMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < TileMatrix.GetLength(1); j++)
+                {
+                    TileMatrix[i, j] = defaultTile.Clone();
+                    //TO DO Constructor and States
+                }
+            }
+
+            entropyThreshold = EntropyT;
+        }
+
+        public WFCTile GetTile(Vector3Int index)
         {
             return TileMatrix[index.x, index.y];
         }
 
         private bool IsInBoundsX(int i)
         {
-            return i > 0 && i < TileMatrix.GetLength(0);
+            return i >= 0 && i < TileMatrix.GetLength(0);
         }
         private bool IsInBoundsY(int j)
         {
-            return j > 0 && j < TileMatrix.GetLength(1);
+            return j >= 0 && j < TileMatrix.GetLength(1);
         }
-
-        private bool IsInBounds(int i, int j)
+        protected bool IsInBounds(int i, int j)
         {
             return IsInBoundsX(i) && IsInBoundsY(j);
         }
 
-        private Vector2Int[] getNeighbourIndices(int i, int j, int r)
+        protected List<Vector2Int> getNeighbourIndices(int i, int j, int r)
         {
-            Vector2Int[] indices = new Vector2Int[0];
+            
+            List<Vector2Int> indices = new List<Vector2Int>();
             for(int rI =-r; rI<= r; rI++)
             {
                 for(int rJ =-r; rJ<= r;rJ++)
                 {
-                    if (IsInBounds(i + rI, j + rJ))
+                    if (IsInBounds(i + rI, j + rJ) && !(rI == 0 && rJ == 0))
                     {
-                        if (i + rI != 0 && j + rJ != 0) { indices.Append(new Vector2Int(i + rI, j + rJ)); }
+                         indices.Add(new Vector2Int(i + rI, j + rJ));
                     }
                 }
             }
             return indices;
             
         }
+        protected List<Vector2Int> getNeighbourIndicesRound(int i, int j, int r)
+        {
+            List<Vector2Int> indices = new  List<Vector2Int>();
+            Vector2Int center = new Vector2Int(i, j);
+            for (int rI = -r; rI <= r; rI++)
+            {
+                for (int rJ = -r; rJ <= r; rJ++)
+                {
+                    if (IsInBounds(i + rI, j + rJ) && !(rI == 0  && rJ  == 0))
+                    {Vector2Int v = new Vector2Int(i + rI, j + rJ);
+                        if((v-center).magnitude <= r){indices.Add(v);}
+                    }
+                }
+            }
+            return indices;
+
+        }
         public void UpdateTiles()
         {
             float minEntropy = float.MaxValue;
             float tileEntropy;
-            Tile currentTile;
+            WFCTile currentTile, nTile;
             int minI=0, minJ=0;
             int radius = 1;
+            WFCTile starter = TileMatrix[TileMatrix.GetLength(0) / 2, 0 ];
+            if(starter.isNotCollapsed)
+            {
+                starter.SelectCurrentState();
+                lastUpdatedPosition = new Vector3Int(TileMatrix.GetLength(0)/2, 0, 0);
+                return;
+            }
             for (int i = 0; i < TileMatrix.GetLength(0); i++)
             {
                 for (int j = 0; j < TileMatrix.GetLength(1); j++)
                 {
-                    foreach (Vector2Int v in getNeighbourIndices(i, j, radius))
+                    currentTile = TileMatrix[i, j];
+                    foreach (Vector2Int v in getNeighbourIndicesRound(i, j, radius))
                     {
-
-                        if(v.magnitude==radius)
-                        {
-                            currentTile = TileMatrix[v.x, v.y];
-                            currentTile.updateStates(currentTile.currentState.allowedNeighbours);
-                        }
+                        nTile = TileMatrix[v.x, v.y];
+                        nTile.updateStates(currentTile.currentState.m_allowedNeighbours);
+                        
                     }
                     tileEntropy = TileMatrix[i, j].getEntropy();
-                    if (tileEntropy < minEntropy)
+                    if (tileEntropy <= minEntropy && currentTile.isNotCollapsed)
                     {
                         minEntropy = tileEntropy;
                         minI = i;
@@ -150,7 +154,30 @@ namespace Assets.Scripts.WFC
                     }
                 }
             }
-            TileMatrix[minI, minJ].SelectCurrentState();
+            currentTile = TileMatrix[minI, minJ];
+            if(currentTile.isNotCollapsed && minEntropy < entropyThreshold)
+            {
+                currentTile.SelectCurrentState();
+                lastUpdatedPosition = new Vector3Int(minI, minJ, 0);
+            }
+            //while (minEntropy < entropyThreshold && minEntropy >0  && passes >0)
+            //{
+            //    passes--;
+            //    currentTile = TileMatrix[minI, minJ];
+            //    currentTile.SelectCurrentState();
+            //    foreach (Vector2Int v in getNeighbourIndicesRound(minI, minJ, radius))
+            //    {
+            //        nTile = TileMatrix[v.x, v.y];
+            //        nTile.updateStates(currentTile.currentState.m_allowedNeighbours);
+            //        tileEntropy = nTile.getEntropy();
+            //        if (tileEntropy <= minEntropy && !nTile.isCollapsed)
+            //        {
+            //            minEntropy = tileEntropy;
+            //            minI = v.x;
+            //            minJ = v.y;
+            //        }
+            //    }
+            //}
         }
     }
 }
