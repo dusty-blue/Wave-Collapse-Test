@@ -171,15 +171,15 @@ public class WFC_UnitTests
         List<State> states = SetupStates();
         State updateState = new State("changeMe", 0.0f);
         State finalState = new State("I'm here", 1f);
-        updateState.m_allowedNeighbours = new[] { finalState, updateState};
-        finalState.m_allowedNeighbours = new[] { finalState };
+        updateState.m_allowedNeighbours = new[] { new NeighbourState(finalState,1f), new NeighbourState(updateState,1f)};
+        finalState.m_allowedNeighbours = new[] { new NeighbourState(finalState,1f) };
 
         WFCTile changeTile = new WFCTile(updateState);
 
         TestMatrix testM = new TestMatrix(bounds, changeTile,2f);
 
         testM.UpdateTiles();
-        Assert.AreEqual(finalState, testM.GetTile(new Vector3Int(1, 1, 0)).currentState,$"tile was state {testM.GetTile(new Vector3Int(0, 0, 0)).currentState.m_name}");
+        Assert.AreEqual(finalState, testM.GetTile(new Vector3Int(1,0, 0)).currentState,$"tile was state {testM.GetTile(new Vector3Int(0, 0, 0)).currentState.m_name}");
         testM.UpdateTiles();
         testM.UpdateTiles();
         testM.UpdateTiles();

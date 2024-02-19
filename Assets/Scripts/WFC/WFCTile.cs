@@ -8,14 +8,14 @@ namespace Assets.Scripts.WFC
 
     {
         public State currentState;
-        public State[] possibleStates;
+        public NeighbourState[] possibleStates;
         protected AliasSampling rnd;
         public bool isNotCollapsed = true;
-        public WFCTile(State[] states, State starting )
+        public WFCTile(NeighbourState[] states, State starting )
         {
             possibleStates = states;
             currentState = starting;
-            rnd = new AliasSampling(states.Select(x => x.m_spawnWeight).ToList<float>());
+            rnd = new AliasSampling(states.Select(x => x.m_weight * x.m_state.m_spawnWeight).ToList<float>());
         }
         public WFCTile(State starting)
         {
@@ -25,25 +25,27 @@ namespace Assets.Scripts.WFC
         public float getEntropy()
         {
             float sum = 0;
+            float p =0;
             if(possibleStates.Length ==1)
             {
                 return -currentState.m_spawnWeight;
             }
-            foreach(State s in possibleStates)
+            foreach(NeighbourState s in possibleStates)
             {
-                sum -= s.m_spawnWeight* Mathf.Log(s.m_spawnWeight);
+                p = s.m_weight*s.m_state.m_spawnWeight;
+                sum -= p* Mathf.Log(p,2);
             }
             return sum;
         }
-        public void updateStates(State[] neighbours)
+        public void updateStates(NeighbourState[] neighbours)
         {
             possibleStates = neighbours.Intersect(possibleStates).ToArray();
         }
         public void SelectCurrentState()
         {
-            rnd = new AliasSampling(possibleStates.Select(x => x.m_spawnWeight).ToList<float>());
+            rnd = new AliasSampling(possibleStates.Select(x => x.m_weight * x.m_state.m_spawnWeight).ToList<float>());
             int i = rnd.DrawSample();
-            currentState = possibleStates[i];
+            currentState = possibleStates[i].m_state;
 
             isNotCollapsed = false;
         }

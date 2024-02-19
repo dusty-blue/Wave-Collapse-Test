@@ -38,7 +38,7 @@ public class TileUnitTest
 
         WFCTile abyssTile = new WFCTile(abyss);
         Assert.AreEqual(-0.9f, abyssTile.getEntropy());
-        Assert.AreEqual(1.9f, fluxTile.getEntropy());
+        Assert.AreEqual(1.497766832f, fluxTile.getEntropy(), 0.000001f);
 
         fluxTile.updateStates(new[] { shrubs, trees });
         Assert.Contains(shrubs, fluxTile.possibleStates);
@@ -51,10 +51,6 @@ public class TileUnitTest
         Assert.AreNotEqual(unknown, fluxTile.currentState);
             
        }
-    [Test]
-    public void TileUnitStatisticalPasses()
-    {
-        //TO DO
-    }
+    
 
 }

@@ -42,7 +42,7 @@ namespace Assets.Scripts.WFC
             {
                 for (int j = 0; j < TileMatrix.GetLength(1); j++)
                 {
-                    TileMatrix[i, j] = new WFCTile(new[] { grass }, grass);
+                    TileMatrix[i, j] = new WFCTile(new[] { new NeighbourState(grass,1f) }, grass);
                     //TO DO Constructor and States
                 }
             }
