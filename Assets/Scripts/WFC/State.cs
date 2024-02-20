@@ -15,7 +15,7 @@ namespace Assets.Scripts.WFC
         public float m_spawnWeight;
         public NeighbourState[] m_allowedNeighbours;
         public float[] m_Neighbourweight;
-        public Tile m_UnityTile;
+        public TileBase m_UnityTile;
 
         public State (String name, float weight)
         {
@@ -23,9 +23,21 @@ namespace Assets.Scripts.WFC
             m_spawnWeight = weight;
         }
 
-    }
+        public bool Contains(State s)
+        {
+            foreach (NeighbourState n in m_allowedNeighbours)
+            {
+                if(n.m_state == s)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-    public class NeighbourState
+    }
+    [CreateAssetMenu(fileName = "Data", menuName = "WFC/Neigbour/State", order = 1)]
+    public class NeighbourState : ScriptableObject
     {
         public State m_state;
         public float m_weight =1f;
@@ -33,6 +45,10 @@ namespace Assets.Scripts.WFC
         {
             m_state = neighbour;
             m_weight = weight;
+        }
+        public float spawnWeight
+        {
+            get { return m_weight * m_state.m_spawnWeight; }
         }
 
     }

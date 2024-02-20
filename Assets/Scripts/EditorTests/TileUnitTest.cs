@@ -10,7 +10,7 @@ public class TileUnitTest
     // A Test behaves as an ordinary method
     public class TestTile: WFCTile
     {
-        public TestTile(State[] states, State starting) : base(states, starting)
+        public TestTile(NeighbourState[] states, State starting) : base(states, starting)
         {
         }
     }
@@ -29,23 +29,23 @@ public class TileUnitTest
 
         State unknown = new State("", 1f);
 
-        abyss.m_allowedNeighbours = new[] { abyss };
-        grass.m_allowedNeighbours = new[] { grass, shrubs };
-        shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
-        trees.m_allowedNeighbours = new[] { shrubs };
+        //abyss.m_allowedNeighbours = new[] { abyss };
+        //grass.m_allowedNeighbours = new[] { grass, shrubs };
+        //shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
+        //trees.m_allowedNeighbours = new[] { shrubs };
 
-        WFCTile fluxTile = new WFCTile(new[] { abyss, grass, shrubs, trees }, unknown);
+        WFCTile fluxTile = new WFCTile(new[] { new NeighbourState(grass,1f)}, unknown); //[CreateAssetMenu(fileName = "Data", menuName = "WFC/State", order = 1)]
 
         WFCTile abyssTile = new WFCTile(abyss);
         Assert.AreEqual(-0.9f, abyssTile.getEntropy());
         Assert.AreEqual(1.497766832f, fluxTile.getEntropy(), 0.000001f);
 
-        fluxTile.updateStates(new[] { shrubs, trees });
+        //fluxTile.updateStates(new[] { shrubs, trees });
         Assert.Contains(shrubs, fluxTile.possibleStates);
         Assert.Contains(trees, fluxTile.possibleStates);
         Assert.AreEqual(2, fluxTile.possibleStates.Length);
 
-        abyssTile.updateStates(new[] { shrubs });
+        abyssTile.updateStates(new[] { new NeighbourState(shrubs, 1f) });
         Assert.AreEqual(0, abyssTile.possibleStates.Length);
         fluxTile.SelectCurrentState();
         Assert.AreNotEqual(unknown, fluxTile.currentState);

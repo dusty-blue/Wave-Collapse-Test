@@ -6,6 +6,8 @@ using UnityEngine.TestTools;
 using Assets.Scripts.WFC;
 using System.Linq;
 using System;
+using UnityEditor;
+using System.IO;
 
 public class StateUnitTest
 {
@@ -15,27 +17,44 @@ public class StateUnitTest
     public void StateUnitTestSimplePasses()
     {
         // Use the Assert class to test conditions
-        State grass = new State("Grass", 0.5f);
+        List<String> stateNames = new()
+        {
+            "Grass",
+            "Shrubs",
+            "Tree"
+        };
 
-        Assert.AreEqual("Grass", grass.m_name);
+        Dictionary<String, State> stateDic = new();
 
-        State shrubs = new State("Shrubs", 0.4f );
-        
-        State trees = new State("Trees", 0.1f);
+        foreach (String s in stateNames)
+        {
+            string[] files = Directory.GetFiles($"Assets/Scripts/WFC/States/Test/N{s}", "*.asset", SearchOption.TopDirectoryOnly);
+            List<NeighbourState> nStates = new();
+            foreach (var f in files)
+            {
+                ScriptableObject o = AssetDatabase.LoadAssetAtPath<ScriptableObject>(f);
+                if ( o.GetType() == typeof(State))
+                {
+                    stateDic.Add(s, (State)o);
+                } else if (o.GetType() == typeof(NeighbourState))
+                {
+                    nStates.Add((NeighbourState)o);
+                }
+            }
+            if (stateDic.ContainsKey(s))
+            {
+                stateDic[s].m_allowedNeighbours = nStates.ToArray();
+            }
+        }
+        Assert.AreEqual(stateNames.Count, stateDic.Count);
 
-        grass.m_allowedNeighbours = new[] { grass, shrubs };
-        shrubs.m_allowedNeighbours = new[] { grass, shrubs ,trees};
-        trees.m_allowedNeighbours = new []{ shrubs};
+        foreach(KeyValuePair<String,State> s in stateDic)
+        {
+            Assert.IsNotNull(s.Value.m_allowedNeighbours, $"Neighbours were null for {s.Key}");
+            Assert.IsTrue(s.Value.Contains(stateDic["Shrubs"]),$"Could not find Shrubs for state {s.Key}");        
+        }
 
-        Assert.IsNotNull(shrubs.m_allowedNeighbours);
-        Assert.IsNotNull(trees.m_allowedNeighbours);
-        Assert.IsNotNull(grass.m_allowedNeighbours);
-        Assert.AreEqual(2, grass.m_allowedNeighbours.Length);
-        Assert.AreEqual(3, shrubs.m_allowedNeighbours.Length);
-        Assert.AreEqual(1, trees.m_allowedNeighbours.Length);
-        Assert.Contains(grass, grass.m_allowedNeighbours);
-
-        Assert.Contains(grass, grass.m_allowedNeighbours[1].m_allowedNeighbours);
+        Assert.IsTrue(stateDic["Grass"].m_allowedNeighbours[1].m_state.Contains(stateDic["Shrubs"]));
 
         
         // TO DO?

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -32,14 +33,32 @@ namespace Assets.Scripts.WFC
             }
             foreach(NeighbourState s in possibleStates)
             {
-                p = s.m_weight*s.m_state.m_spawnWeight;
+                p = s.spawnWeight;
                 sum -= p* Mathf.Log(p,2);
             }
             return sum;
         }
         public void updateStates(NeighbourState[] neighbours)
         {
-            possibleStates = neighbours.Intersect(possibleStates).ToArray();
+            List<NeighbourState> newList = new();
+            foreach (NeighbourState n in neighbours)
+            {
+                foreach(NeighbourState s in possibleStates)
+                {
+                    if(n.m_state == s.m_state)
+                    { 
+                        if ( n.spawnWeight <= s.spawnWeight)
+                        {
+                            newList.Add(n);
+                        }
+                        else
+                        {
+                            newList.Add(s);
+                        }
+                    }
+                }
+            }
+            possibleStates = newList.ToArray();
         }
         public void SelectCurrentState()
         {

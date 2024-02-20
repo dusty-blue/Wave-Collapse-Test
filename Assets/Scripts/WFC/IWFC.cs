@@ -61,7 +61,7 @@ namespace Assets.Scripts.WFC
                 for (int j = 0; j < TileMatrix.GetLength(1); j++)
                 {
                     TileMatrix[i, j] = defaultTile.Clone();
-                    //TO DO Constructor and States
+                    
                 }
             }
 

@@ -1,6 +1,7 @@
 using Assets.Scripts.WFC;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
@@ -18,37 +19,35 @@ public class WFC_TerrainGeneration : MonoBehaviour
     private WFC_Matrix m_WFCMatrix;
 
     private Dictionary<string, State> stateDic;
+    [SerializeField]  private List<State> stateList;
 
     void initStateDic ()
     {
-        State grass = new State("Grass", scissorWeight);
-
-        Assert.AreEqual("Grass", grass.m_name);
-
-        State shrubs = new State("Shrubs", paperWeight);
-
-        State trees = new State("Trees", rockWeight);
-
-        State initial = new State("Init", 0f);
-
-        initial.m_allowedNeighbours = new[] { grass, shrubs, trees };
-        grass.m_allowedNeighbours = new[] { grass, shrubs };
-        shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
-        trees.m_allowedNeighbours = new[] { shrubs };
-
         stateDic = new Dictionary<string, State>();
+        State initial =  ScriptableObject.CreateInstance<State>();
+        initial.m_name = "Init";
+        initial.m_spawnWeight = 0f;
+        initial.m_Neighbourweight = new float[0];
+        initial.m_UnityTile = m_rockTile;
+
+        List<NeighbourState> initList = new List<NeighbourState>(stateList.Count); 
+
+        foreach(State s in stateList)
+        {
+            initList.Add(new NeighbourState(s, s.m_spawnWeight));
+            stateDic.Add(s.m_name, s);
+        }
+        initial.m_allowedNeighbours = initList.ToArray();
+        AssetDatabase.CreateAsset(initial, "Assets/Scripts/WFC/States/Test/NInit/init.asset");
         stateDic.Add(initial.m_name, initial);
-        stateDic.Add(grass.m_name, grass);
-        stateDic.Add(shrubs.m_name, shrubs);
-        stateDic.Add(trees.m_name, trees);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        initStateDic();
         m_rockTile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
         m_rockTile.sprite = rock;
+        initStateDic();
         m_WFCMatrix = new WFC_Matrix(area, new WFCTile(stateDic["Init"]), entropyThreshold);
         Tilemap tilemap = GetComponent<Tilemap>();
         TileBase[] tileArray = tilemap.GetTilesBlock(area);
@@ -57,27 +56,11 @@ public class WFC_TerrainGeneration : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         m_deltaTimeSum += Time.deltaTime;
         m_WFCMatrix.UpdateTiles();
         State newState = m_WFCMatrix.GetTile(m_WFCMatrix.lastUpdatedPosition).currentState;
 
-        switch (newState.m_name)
-        {
-            case "Grass":
-                m_rockTile.sprite = scissor;
-                break;
-            case "Shrubs":
-                m_rockTile.sprite = paper;
-                break;
-            case "Trees":
-                m_rockTile.sprite = rock;
-                break;
-            default:
-                m_rockTile.sprite = scissor;
-                break;
-        }
-        m_tilemap.SetTile(m_WFCMatrix.lastUpdatedPosition, m_rockTile);
+        m_tilemap.SetTile(m_WFCMatrix.lastUpdatedPosition, newState.m_UnityTile);
         m_rockTile.RefreshTile(m_WFCMatrix.lastUpdatedPosition, m_tilemap);
     }
 }

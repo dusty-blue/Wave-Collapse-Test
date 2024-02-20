@@ -310,13 +310,17 @@ MonoBehaviour:
   rock: {fileID: 21300000, guid: 6094e47cff81e234286f7ed0d62ebe64, type: 3}
   paper: {fileID: 21300000, guid: 6b4e24e05ae4ecb44b5cfc94ee57112f, type: 3}
   scissor: {fileID: 21300000, guid: 396878e29810bcf4dbecc2af2015b77b, type: 3}
-  entropyThreshold: 2
+  entropyThreshold: 1.3
   rockWeight: 0
   paperWeight: 0.001
   scissorWeight: 0.999
   area:
     m_Position: {x: 0, y: 0, z: 0}
-    m_Size: {x: 20, y: 12, z: 1}
+    m_Size: {x: 20, y: 20, z: 1}
+  stateList:
+  - {fileID: 11400000, guid: 46aa520f39331d7419f11936f38a34a3, type: 2}
+  - {fileID: 11400000, guid: 56bd488216993e44392a68ff7785b7fc, type: 2}
+  - {fileID: 11400000, guid: bda990bfe9fa4e9469521c67e2a96e05, type: 2}
 --- !u!483693784 &1244263311
 TilemapRenderer:
   m_ObjectHideFlags: 0

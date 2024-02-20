@@ -61,9 +61,9 @@ public class WFC_UnitTests
         State trees = new State("Trees", 0.1f);
 
 
-        grass.m_allowedNeighbours = new[] { grass, shrubs };
-        shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
-        trees.m_allowedNeighbours = new[] { shrubs };
+        //grass.m_allowedNeighbours = new[] { grass, shrubs };
+        //shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
+        //trees.m_allowedNeighbours = new[] { shrubs };
 
         List<State> l = new List<State>();
         l.Add(grass);
