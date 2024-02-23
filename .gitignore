@@ -426,3 +426,4 @@ Thumbs.db.meta
 # VS Code
 *.vscode
 /Assets/Profiler/no alias init.data
+*.data
