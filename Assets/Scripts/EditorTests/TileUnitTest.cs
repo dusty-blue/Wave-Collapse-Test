@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Assets.Scripts.WFC;
+using System;
 
 public class TileUnitTest
 {
@@ -14,41 +15,50 @@ public class TileUnitTest
         {
         }
     }
+
+    private Dictionary<String, State> SetupStates(List<String> stateNames)
+    {
+
+        StateLoader loader = new("Assets/Scripts/WFC/States/Test");
+        Dictionary<String, State> stateDic = loader.LoadStates(stateNames.ToArray());
+
+        return stateDic;
+    }
     [Test]
     public void TileUnitTestSimplePasses()
     {
         // Use the Assert class to test conditions
 
-        State grass = new State("Grass", 0.5f);
-
-        State shrubs = new State("Shrubs", 0.4f);
-
-        State trees = new State("Trees", 0.1f);
-
-        State abyss = new State("Void", 0.9f);
-
-        State unknown = new State("", 1f);
+        List<String> stateNames = new()
+        {
+            "NGrass",
+            "NShrubs",
+            "NTree"
+        };
+        Dictionary<String, State> stateDic = SetupStates(stateNames);
 
         //abyss.m_allowedNeighbours = new[] { abyss };
         //grass.m_allowedNeighbours = new[] { grass, shrubs };
         //shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
         //trees.m_allowedNeighbours = new[] { shrubs };
+        NeighbourState testNeighbour = ScriptableObject.CreateInstance<NeighbourState>();
+        testNeighbour.m_state = stateDic["NTree"];
 
-        WFCTile fluxTile = new WFCTile(new[] { new NeighbourState(grass,1f)}, unknown); //[CreateAssetMenu(fileName = "Data", menuName = "WFC/State", order = 1)]
+        WFCTile grassTile = new WFCTile(stateDic["NTree"].m_allowedNeighbours, stateDic["NGrass"]); //[CreateAssetMenu(fileName = "Data", menuName = "WFC/State", order = 1)]
 
-        WFCTile abyssTile = new WFCTile(abyss);
-        Assert.AreEqual(-0.9f, abyssTile.getEntropy());
-        Assert.AreEqual(1.497766832f, fluxTile.getEntropy(), 0.000001f);
+        WFCTile testTile = new WFCTile(new[]{ testNeighbour}, stateDic["NTree"]);
+        Assert.AreEqual(-0.2f, testTile.getEntropy());
+        Assert.AreEqual(0.7235767f, grassTile.getEntropy(), 0.000001f);
 
         //fluxTile.updateStates(new[] { shrubs, trees });
-        Assert.Contains(shrubs, fluxTile.possibleStates);
-        Assert.Contains(trees, fluxTile.possibleStates);
-        Assert.AreEqual(2, fluxTile.possibleStates.Length);
+        Assert.Contains(stateDic["NTree"].m_allowedNeighbours[0],grassTile.possibleStates);
+        Assert.Contains(stateDic["NTree"].m_allowedNeighbours[1], grassTile.possibleStates);
+        Assert.AreEqual(2, grassTile.possibleStates.Length);
 
-        abyssTile.updateStates(new[] { new NeighbourState(shrubs, 1f) });
-        Assert.AreEqual(0, abyssTile.possibleStates.Length);
-        fluxTile.SelectCurrentState();
-        Assert.AreNotEqual(unknown, fluxTile.currentState);
+        testTile.updateStates(new[] { ScriptableObject.CreateInstance<NeighbourState>() });
+        Assert.AreEqual(0, testTile.possibleStates.Length);
+        grassTile.SelectCurrentState();
+        Assert.AreNotEqual(testTile, grassTile.currentState);
             
        }
     

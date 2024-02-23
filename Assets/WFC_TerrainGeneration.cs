@@ -20,26 +20,20 @@ public class WFC_TerrainGeneration : MonoBehaviour
 
     private Dictionary<string, State> stateDic;
     [SerializeField]  private List<State> stateList;
+    [SerializeField] private State initialState;
 
     void initStateDic ()
     {
         stateDic = new Dictionary<string, State>();
-        State initial =  ScriptableObject.CreateInstance<State>();
-        initial.m_name = "Init";
-        initial.m_spawnWeight = 0f;
-        initial.m_Neighbourweight = new float[0];
-        initial.m_UnityTile = m_rockTile;
 
-        List<NeighbourState> initList = new List<NeighbourState>(stateList.Count); 
+        List<NeighbourState> initList = new List<NeighbourState>(stateList.Count+1);
+        stateDic.Add(initialState.m_name, initialState);
 
         foreach(State s in stateList)
         {
-            initList.Add(new NeighbourState(s, s.m_spawnWeight));
+            
             stateDic.Add(s.m_name, s);
         }
-        initial.m_allowedNeighbours = initList.ToArray();
-        AssetDatabase.CreateAsset(initial, "Assets/Scripts/WFC/States/Test/NInit/init.asset");
-        stateDic.Add(initial.m_name, initial);
     }
 
     // Start is called before the first frame update
@@ -48,7 +42,7 @@ public class WFC_TerrainGeneration : MonoBehaviour
         m_rockTile = ScriptableObject.CreateInstance<UnityEngine.Tilemaps.Tile>();
         m_rockTile.sprite = rock;
         initStateDic();
-        m_WFCMatrix = new WFC_Matrix(area, new WFCTile(stateDic["Init"]), entropyThreshold);
+        m_WFCMatrix = new WFC_Matrix(area, new WFCTile(initialState), entropyThreshold);
         Tilemap tilemap = GetComponent<Tilemap>();
         TileBase[] tileArray = tilemap.GetTilesBlock(area);
     }

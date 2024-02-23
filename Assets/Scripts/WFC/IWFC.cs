@@ -30,24 +30,6 @@ namespace Assets.Scripts.WFC
         }
 
 
-        public WFC_Matrix(BoundsInt bounds)
-        {
-            State grass = new State("Grass", 0.5f);
-            int xSize = Math.Abs(bounds.xMax - bounds.xMin);
-            int ySize = Math.Abs(bounds.yMax - bounds.yMin);
-
-            TileMatrix = new WFCTile[xSize, ySize];
-
-            for(int i = 0; i < TileMatrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < TileMatrix.GetLength(1); j++)
-                {
-                    TileMatrix[i, j] = new WFCTile(new[] { new NeighbourState(grass,1f) }, grass);
-                    //TO DO Constructor and States
-                }
-            }
-        }
-
         public WFC_Matrix(BoundsInt bounds, WFCTile defaultTile, float EntropyT)
         {
             
@@ -119,6 +101,27 @@ namespace Assets.Scripts.WFC
             }
             return indices;
 
+        }
+
+        private Vector2Int GetMinEntropy()
+        {
+            float minE = float.MaxValue;
+            float tileEntropy;
+            Vector2Int minW = new();
+            for (int i=0; i< TileMatrix.GetLength(1); i++)
+            {
+                for(int j=0; j< TileMatrix.GetLength(0); j++)
+                {
+                    tileEntropy = TileMatrix[j, i].getEntropy();
+                    if (tileEntropy <= minE && TileMatrix[j, i].isNotCollapsed)
+                    {
+                        minE = tileEntropy;
+                        minW.y = i;
+                        minW.x = j;
+                    }
+                }
+            }
+            return minW;
         }
         public void UpdateTiles()
         {

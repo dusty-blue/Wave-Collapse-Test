@@ -16,7 +16,7 @@ namespace Assets.Scripts.WFC
         {
             possibleStates = states;
             currentState = starting;
-            rnd = new AliasSampling(states.Select(x => x.m_weight * x.m_state.m_spawnWeight).ToList<float>());
+            rnd = new AliasSampling(states.Select(x => x.spawnWeight).ToList<float>());
         }
         public WFCTile(State starting)
         {
@@ -29,7 +29,7 @@ namespace Assets.Scripts.WFC
             float p =0;
             if(possibleStates.Length ==1)
             {
-                return -currentState.m_spawnWeight;
+                return -possibleStates[0].spawnWeight;
             }
             foreach(NeighbourState s in possibleStates)
             {
@@ -62,7 +62,7 @@ namespace Assets.Scripts.WFC
         }
         public void SelectCurrentState()
         {
-            rnd = new AliasSampling(possibleStates.Select(x => x.m_weight * x.m_state.m_spawnWeight).ToList<float>());
+            rnd = new AliasSampling(possibleStates.Select(x => x.spawnWeight).ToList<float>());
             int i = rnd.DrawSample();
             currentState = possibleStates[i].m_state;
 

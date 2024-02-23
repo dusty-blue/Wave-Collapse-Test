@@ -1,0 +1,34 @@
+{
+    "name": "ConsoleInputActions",
+    "maps": [
+        {
+            "name": "ConsoleMap",
+            "id": "3e5c39d6-05cf-44ab-bf48-f3a0d86e08ee",
+            "actions": [
+                {
+                    "name": "Toggle Console",
+                    "type": "Button",
+                    "id": "990937da-f742-4a16-a137-e5eacad6961b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c29c8f49-34b2-48a7-ac9c-eccfc2420f48",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Console",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
