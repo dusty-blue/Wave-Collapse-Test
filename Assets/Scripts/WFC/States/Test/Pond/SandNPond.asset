@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: SandNPond
   m_EditorClassIdentifier: WFCAssembly:Assets.Scripts.WFC:NeighbourState
   m_state: {fileID: 11400000, guid: 75f16cea2b1e723448eed8baa193a591, type: 2}
-  m_weight: 0.3
+  m_weight: 0.4

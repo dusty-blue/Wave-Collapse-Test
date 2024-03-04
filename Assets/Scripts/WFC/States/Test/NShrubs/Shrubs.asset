@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shrubs
   m_EditorClassIdentifier: 
   m_name: Shrubs
-  m_spawnWeight: 0.6
+  m_spawnWeight: 0.4
   m_allowedNeighbours:
   - {fileID: 11400000, guid: 06727353ccb219049a4aa0b214571b98, type: 2}
   - {fileID: 11400000, guid: 8b03b5c39a28720428b0463778382cf3, type: 2}

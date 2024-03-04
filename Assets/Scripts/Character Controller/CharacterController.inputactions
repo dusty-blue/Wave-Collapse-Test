@@ -1,0 +1,40 @@
+{
+    "name": "CharacterController",
+    "maps": [
+        {
+            "name": "OpenWorldExplore",
+            "id": "46bd0f65-5ebe-4293-87ed-dcb53c6a4baf",
+            "actions": [
+                {
+                    "name": "CollapseTile",
+                    "type": "Button",
+                    "id": "188b4fc5-d1ed-46e4-883b-b759670c288a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d88779bd-e6dc-4dec-8be4-d8c25958ee6d",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "OpneWorldExplore",
+                    "action": "CollapseTile",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "OpneWorldExplore",
+            "bindingGroup": "OpneWorldExplore",
+            "devices": []
+        }
+    ]
+}

@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 using Assets.Scripts.WFC;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class TileUnitTest
 {
@@ -37,10 +35,6 @@ public class TileUnitTest
         };
         Dictionary<String, State> stateDic = SetupStates(stateNames);
 
-        //abyss.m_allowedNeighbours = new[] { abyss };
-        //grass.m_allowedNeighbours = new[] { grass, shrubs };
-        //shrubs.m_allowedNeighbours = new[] { grass, shrubs, trees };
-        //trees.m_allowedNeighbours = new[] { shrubs };
         NeighbourState testNeighbour = ScriptableObject.CreateInstance<NeighbourState>();
         testNeighbour.m_state = stateDic["NTree"];
 
@@ -61,6 +55,41 @@ public class TileUnitTest
         Assert.AreNotEqual(testTile, grassTile.currentState);
             
        }
-    
+
+    [Test]
+    public void TryUpdateTests()
+    {
+        List<String> stateNames = new()
+        {
+            "NGrass",
+            "NShrubs",
+            "NTree",
+            "Init"
+        };
+        Dictionary<String, State> stateDic = SetupStates(stateNames);
+
+        NeighbourState testNeighbour = ScriptableObject.CreateInstance<NeighbourState>();
+        testNeighbour.m_state = stateDic["NTree"];
+
+        WFCTile initTile = new(stateDic["Init"]);
+        WFCTile grassTile = new (stateDic["NGrass"]);
+        WFCTile shrubTile = new(stateDic["NShrubs"]);
+
+        WFCTile impossibleTile = new(new NeighbourState[0], stateDic["Init"]);
+
+        Assert.IsTrue(grassTile.TryUpdateStates(grassTile.possibleStates));
+        Assert.IsFalse(initTile.TryUpdateStates(grassTile.possibleStates));
+        Assert.IsTrue(initTile.TryUpdateStates(grassTile.possibleStates));
+        Assert.AreEqual(float.MinValue, impossibleTile.getEntropy());
+        Assert.IsTrue(impossibleTile.isImpossible);
+
+        shrubTile.TryUpdateStates(new NeighbourState[0]);
+        Assert.IsTrue(shrubTile.isImpossible);
+        Assert.AreEqual(float.MinValue, shrubTile.getEntropy());
+
+        WFCTile startTile = new(stateDic["Init"]);
+
+    }
+
 
 }

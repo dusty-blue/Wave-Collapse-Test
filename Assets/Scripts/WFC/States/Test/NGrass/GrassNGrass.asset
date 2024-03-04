@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: GrassNGrass
   m_EditorClassIdentifier: 
   m_state: {fileID: 11400000, guid: 46aa520f39331d7419f11936f38a34a3, type: 2}
-  m_weight: 0.8
+  m_weight: 0.5

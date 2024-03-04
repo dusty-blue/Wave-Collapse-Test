@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95d49240ce7311e4bb964c8d65b67d83, type: 3}
-  m_Name: TestO
+  m_Script: {fileID: 11500000, guid: ce88ac1c7d40ebe459cd3fe86e0dc996, type: 3}
+  m_Name: Log Command
   m_EditorClassIdentifier: 
-  m_state: {fileID: 0}
-  m_weight: 1
+  commandWord: log

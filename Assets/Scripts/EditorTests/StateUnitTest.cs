@@ -65,18 +65,18 @@ public class StateUnitTest
 
         List<NeighbourState> initList = new List<NeighbourState>(stateNames.Count);
 
-        State initial = ScriptableObject.CreateInstance<State>();
+        //State initial = ScriptableObject.CreateInstance<State>();
 
-        foreach (KeyValuePair<String,State> s in stateDic)
-        {
-            NeighbourState ns = ScriptableObject.CreateInstance<NeighbourState>();
-            ns.m_state = s.Value;
-            ns.m_weight = 1f;
-            initList.Add(ns);
+        //foreach (KeyValuePair<String,State> s in stateDic)
+        //{
+        //    NeighbourState ns = ScriptableObject.CreateInstance<NeighbourState>();
+        //    ns.m_state = s.Value;
+        //    ns.m_weight = 1f;
+        //    initList.Add(ns);
 
-            AssetDatabase.CreateAsset(ns, $"Assets/Scripts/WFC/States/Test/Init/{ns.m_state.m_name}Ninit.asset");
-        }
-        initial.m_allowedNeighbours = initList.ToArray();
-        AssetDatabase.CreateAsset(initial, "Assets/Scripts/WFC/States/Test/Init/Init.asset");
+        //    AssetDatabase.CreateAsset(ns, $"Assets/Scripts/WFC/States/Test/Init/{ns.m_state.m_name}Ninit.asset");
+        //}
+        //initial.m_allowedNeighbours = initList.ToArray();
+        //AssetDatabase.CreateAsset(initial, "Assets/Scripts/WFC/States/Test/Init/Init.asset");
     }
 }

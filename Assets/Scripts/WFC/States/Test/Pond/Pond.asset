@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pond
   m_EditorClassIdentifier: 
   m_name: Pond
-  m_spawnWeight: 0.8
+  m_spawnWeight: 0.6
   m_allowedNeighbours:
   - {fileID: 11400000, guid: f77a4e8f36ba83c4dbb6334a06de4f61, type: 2}
   - {fileID: 11400000, guid: df38b76b5805d6c4a81d072150044f19, type: 2}

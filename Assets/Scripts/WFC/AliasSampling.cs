@@ -75,6 +75,10 @@ namespace Assets.Scripts.WFC
             float n = (float)U.Count();
             int i = (int)Math.Floor(n* x);
             float y = n * x - (float)i;
+            if(U.Count==0)
+            {
+                return -1;
+            }
             if (y < U[i])
             {
                 return i;
