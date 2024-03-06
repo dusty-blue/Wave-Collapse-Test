@@ -23,7 +23,7 @@ public class WFC_TerrainGeneration : MonoBehaviour
     private Dictionary<string, State> stateDic;
     [SerializeField]  private List<State> stateList;
     [SerializeField] private State initialState;
-    [SerializeField] private InputActionAsset InputActions;
+    [SerializeField] private WaveCollapseInputActions InputActions;
     private InputAction m_CollapseAction;
     
     public TileBase defaultTile
@@ -53,8 +53,8 @@ public class WFC_TerrainGeneration : MonoBehaviour
         m_WFCMatrix = new WFC_Matrix(area, new WFCTile(initialState), entropyThreshold);
         Tilemap tilemap = GetComponent<Tilemap>();
         TileBase[] tileArray = tilemap.GetTilesBlock(area);
-        m_CollapseAction = InputActions.FindAction("Collapse");
-
+        InputActions = new WaveCollapseInputActions();
+        m_CollapseAction = InputActions.Player.Collapse;
         m_CollapseAction.started += CollapseCallBack;
     }
 
