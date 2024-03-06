@@ -13,12 +13,12 @@ namespace Assets.Scripts.WFC
     {
 
         //State[,] StateMatrix { get; }
-        void UpdateTiles();
+        void UpdateTiles(bool forceUpate);
         public WFCTile GetTile(Vector3Int index);
         public void SetAllTiles(WFCTile tile);
 
         public void ResetTile(Vector3Int index);
-        public void CollapseTile(Vector2Int index, int passes ,int radius);
+        public void CollapseTile(Vector2Int index, int passes ,int radius, bool forceUpdate);
         }
     
 }

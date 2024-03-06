@@ -116,7 +116,11 @@ namespace Assets.Scripts.WFC
             }
             rnd = new AliasSampling(possibleStates.Select(x => x.spawnWeight).ToList<float>());
             int i = rnd.DrawSample();
-            
+            if(i<0)
+            {
+                isImpossible = true;
+                return;
+            }
             currentState = possibleStates[i].m_state;
 
             isNotCollapsed = false;

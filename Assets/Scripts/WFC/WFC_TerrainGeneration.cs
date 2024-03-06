@@ -8,7 +8,6 @@ using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
-using System.Xml.Serialization;
 
 public class WFC_TerrainGeneration : MonoBehaviour
 {
@@ -24,6 +23,8 @@ public class WFC_TerrainGeneration : MonoBehaviour
     private Dictionary<string, State> stateDic;
     [SerializeField]  private List<State> stateList;
     [SerializeField] private State initialState;
+    [SerializeField] private InputActionAsset InputActions;
+    private InputAction m_CollapseAction;
     
     public TileBase defaultTile
     {
@@ -52,24 +53,45 @@ public class WFC_TerrainGeneration : MonoBehaviour
         m_WFCMatrix = new WFC_Matrix(area, new WFCTile(initialState), entropyThreshold);
         Tilemap tilemap = GetComponent<Tilemap>();
         TileBase[] tileArray = tilemap.GetTilesBlock(area);
-        
+        m_CollapseAction = InputActions.FindAction("Collapse");
+
+        m_CollapseAction.started += CollapseCallBack;
     }
 
     // Update is called once per frame
     void Update()
     {
         m_deltaTimeSum += Time.deltaTime;
-        m_WFCMatrix.UpdateTiles();
-        State newState = m_WFCMatrix.GetTile(m_WFCMatrix.lastUpdatedPosition).currentState;
-        if (m_WFCMatrix.GetTile(m_WFCMatrix.lastUpdatedPosition).isImpossible)
+        m_WFCMatrix.UpdateTiles(false);
+        State newState;
+        //Vector3Int lastPos = m_WFCMatrix.lastUpdatedPosition;
+        foreach(Vector3Int pos in m_WFCMatrix.updateQueue)
         {
+            newState= m_WFCMatrix.GetTile(pos).currentState;
+            if (m_WFCMatrix.GetTile(pos).isImpossible)
+            {
 
-            m_tilemap.SetTile(m_WFCMatrix.lastUpdatedPosition, impossibleTile);
-            impossibleTile.RefreshTile(m_WFCMatrix.lastUpdatedPosition, m_tilemap);
+                m_tilemap.SetTile(pos, impossibleTile);
+                impossibleTile.RefreshTile(pos, m_tilemap);
+            } else
+            {
+                m_tilemap.SetTile(pos, newState.m_UnityTile);
+                newState.m_UnityTile.RefreshTile(pos, m_tilemap);
+            }
+
+            
         }
+        m_WFCMatrix.clearQueue();
+        //newState = m_WFCMatrix.GetTile(lastPos).currentState;
+        //if (m_WFCMatrix.GetTile(lastPos).isImpossible)
+        //{
 
-        m_tilemap.SetTile(m_WFCMatrix.lastUpdatedPosition, newState.m_UnityTile);
-        newState.m_UnityTile.RefreshTile(m_WFCMatrix.lastUpdatedPosition, m_tilemap);
+        //    m_tilemap.SetTile(lastPos, impossibleTile);
+        //    impossibleTile.RefreshTile(lastPos, m_tilemap);
+        //}
+
+        //m_tilemap.SetTile(lastPos, newState.m_UnityTile);
+        //newState.m_UnityTile.RefreshTile(lastPos, m_tilemap);
     }
 
     public void ResetMatrix()
@@ -98,16 +120,14 @@ public class WFC_TerrainGeneration : MonoBehaviour
     public void CollapseTile(Vector3 worldPos)
     {
         Transform t =this.GetComponentInParent<Transform>();
-        Vector3 localPos = t.InverseTransformDirection(worldPos);
-        int x =(int) Mathf.Floor(localPos.x);
-        int y = (int)Mathf.Floor(localPos.y);
-        m_WFCMatrix.CollapseTile(new Vector2Int(x, y), 30, 1);
+        Vector3 localPos = t.InverseTransformPoint(worldPos);
+        Vector3Int cellPos = m_tilemap.LocalToCell(localPos);
+        m_WFCMatrix.CollapseTile(new Vector2Int(cellPos.x, cellPos.y), 30, 1,true);
 
     }
 
     public void  CollapseCallBack (InputAction.CallbackContext context)
     {
-
         Vector2 screenPos = context.ReadValue<Vector2>();
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y));
         CollapseTile(worldPos);

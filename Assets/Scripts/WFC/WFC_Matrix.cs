@@ -11,10 +11,24 @@ namespace Assets.Scripts.WFC
 
         private float m_ET;
 
-        public Vector3Int lastUpdatedPosition;
+        public Vector3Int lastUpdatedPosition { 
+            get {
+                m_updateQueue.TryDequeue(out m_Last);
+                return m_Last;
+            } 
+            set { m_Last = value; } 
+        }
+        private Queue<Vector3Int> m_updateQueue;
+        private Vector3Int m_Last;
+        public Vector3Int[] updateQueue { get { return m_updateQueue.ToArray(); } }
         public float entropyThreshold {
             get { return this.m_ET; } 
             set { this.m_ET = value; }
+        }
+
+        public void clearQueue()
+        {
+            m_updateQueue.Clear();
         }
         public WFC_Matrix(BoundsInt bounds, WFCTile defaultTile, float EntropyT)
         {
@@ -27,6 +41,7 @@ namespace Assets.Scripts.WFC
             SetAllTiles(defaultTile);
 
             entropyThreshold = EntropyT;
+            m_updateQueue = new();
         }
 
         public WFCTile GetTile(Vector3Int index)
@@ -103,25 +118,13 @@ namespace Assets.Scripts.WFC
                 return minW;
             }
         }
-        public void UpdateTiles()
+        public void UpdateTiles(bool forceUpdate)
         {
-            //float minEntropy = float.MaxValue;
-            //float tileEntropy;
-            WFCTile currentTile, nTile;
+            
             int radius = 1;
             int passes = 150;
-            Vector2Int startI = new(TileMatrix.GetLength(0) / 2, 0);
-            WFCTile starter = TileMatrix[startI.x, startI.y ];
-            if(starter.isNotCollapsed)
-            {
-                starter.SelectCurrentState();
-                CollapseTile(startI,50,1);
-                lastUpdatedPosition = new Vector3Int(TileMatrix.GetLength(0)/2, 0, 0);
-                
-                return;
-            }
 
-            CollapseTile(MinEntropy, passes, radius);
+            CollapseTile(MinEntropy, passes, radius, forceUpdate);
 
             
         }
@@ -143,16 +146,16 @@ namespace Assets.Scripts.WFC
             throw new NotImplementedException();
         }
 
-        public void CollapseTile(Vector2Int index, int passes, int radius)
+        public void CollapseTile(Vector2Int index, int passes, int radius, bool forceUpdate)
         {
             WFCTile currentTile = TileMatrix[index.x, index.y];
             
             Queue<Vector2Int> indexQueue = new();
             indexQueue.Enqueue(index);
-            if (currentTile.isNotCollapsed && currentTile.getEntropy() < entropyThreshold)
+            if (currentTile.isNotCollapsed && (currentTile.getEntropy() < entropyThreshold || forceUpdate))
             {
                 currentTile.SelectCurrentState();
-                lastUpdatedPosition = new Vector3Int(index.x, index.y, 0);
+                m_updateQueue.Enqueue( new Vector3Int(index.x, index.y, 0));
             }
 
             WFCTile nTile;

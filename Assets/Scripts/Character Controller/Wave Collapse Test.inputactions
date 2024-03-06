@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Console",
+                    "type": "Button",
+                    "id": "ceca9592-ebe0-4ac6-aa50-dbd3680fa1cb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -267,7 +276,7 @@
                     "name": "One Modifier",
                     "id": "cb01d17b-bbb9-47fc-9120-3718a1191816",
                     "path": "OneModifier",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
                     "action": "Collapse",
@@ -280,7 +289,7 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard&Mouse",
                     "action": "Collapse",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -295,6 +304,17 @@
                     "action": "Collapse",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "3a98e25d-d675-4203-ae0e-2ae42b066e3d",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Console",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
