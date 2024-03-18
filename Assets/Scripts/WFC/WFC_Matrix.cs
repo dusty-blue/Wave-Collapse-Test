@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TerrainTools;
@@ -141,14 +142,38 @@ namespace Assets.Scripts.WFC
             }
         }
 
-        public void ResetTile(Vector3Int index)
+        public Boolean IsNotCollapsed(Vector3Int index)
         {
-            throw new NotImplementedException();
+            return TileMatrix[index.x, index.y].isNotCollapsed;
+        }
+
+        public void SetTile(Vector3Int index, WFCTile tile)
+        {
+            TileMatrix[index.x, index.y] = tile.Clone();
+            UpdateTile(index);
+            TileMatrix[index.x, index.y].isLocked = true;
+            m_updateQueue.Enqueue(index);
+        }
+
+        public void UpdateTile(Vector3Int index)
+        {
+            WFCTile tile = TileMatrix[index.x, index.y];
+            foreach(Vector2Int v in getNeighbourIndices(index.x, index.y, 1))
+            {
+                tile.TryUpdateStates(TileMatrix[v.x, v.y].currentState.m_allowedNeighbours);
+            }
+        }
+
+        public IEnumerator LockTile(Vector3Int index, float lockTime)
+        {
+            WFCTile tile = TileMatrix[index.x, index.y];
+            return tile.LockForSecs(lockTime);
         }
 
         public void CollapseTile(Vector2Int index, int passes, int radius, bool forceUpdate)
         {
             WFCTile currentTile = TileMatrix[index.x, index.y];
+            if(currentTile.isLocked) { return; }
             
             Queue<Vector2Int> indexQueue = new();
             indexQueue.Enqueue(index);

@@ -40,14 +40,31 @@ namespace Assets.Scripts.Console.Commands
 
             }
 
-            m_wfc.SetAllTiles(m_wfc.defaultTile);
+            
 
-            if(args.Length ==1)
+            if (args.Length == 1)
             {
+                m_wfc.SetAllTiles(m_wfc.defaultTile);
                 m_wfc.ResetMatrix(float.Parse(args[0]));
                 return true;
-            } else
+            } else if (args.Length == 2) {
+                float x, y;
+                Vector3 worldPos;
+                if(float.TryParse(args[0], out x) && float.TryParse(args[1], out y))
+                {
+                    worldPos.x = x;
+                    worldPos.y = y;
+                    worldPos.z =0;
+                    m_wfc.ResetTile(worldPos);
+                    m_wfc.LockTile(worldPos, 3);
+                    return true;
+                }
+                return false;
+                
+            }
+            else
             {
+                m_wfc.SetAllTiles(m_wfc.defaultTile);
                 m_wfc.ResetMatrix();
                 return true;
             }

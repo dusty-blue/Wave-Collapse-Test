@@ -365,6 +365,127 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &606882256
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1244263310}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1887115326}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CollapseCallBack
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Toggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WFC_TerrainGeneration, WFCAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Assets.Scripts.Utilities.Console.DevConsoleBehaviour, consoleAssembly
+      objectReference: {fileID: 0}
+    - target: {fileID: 781641835462243700, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -11.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3973899753990417641, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_Name
+      value: Stitched_back_0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5542204844450470438, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_WFC
+      value: 
+      objectReference: {fileID: 1244263310}
+    - target: {fileID: 8265939153848844870, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265939153848844870, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265939153848844870, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8265939153848844870, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
+      propertyPath: m_SpriteSortPoint
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
 --- !u!1 &1244263308
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,7 +536,7 @@ MonoBehaviour:
   rock: {fileID: 21300000, guid: 6094e47cff81e234286f7ed0d62ebe64, type: 3}
   paper: {fileID: 21300000, guid: 6b4e24e05ae4ecb44b5cfc94ee57112f, type: 3}
   scissor: {fileID: 21300000, guid: 396878e29810bcf4dbecc2af2015b77b, type: 3}
-  entropyThreshold: 5
+  entropyThreshold: 1.45
   rockWeight: 0
   paperWeight: 0.001
   scissorWeight: 0.999
@@ -430,7 +551,40 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 75f16cea2b1e723448eed8baa193a591, type: 2}
   - {fileID: 11400000, guid: 10e92f9b742940d4aa0c35cb9cafb242, type: 2}
   initialState: {fileID: 11400000, guid: c4488b97bcb55b04eb75a0fc48496560, type: 2}
-  InputActions: {fileID: -944628639613478452, guid: c0e86da12aba84e4484ecbabb109dda8, type: 3}
+  InputComp: {fileID: 1820809613}
+  m_CollapseAction:
+    m_Name: Collapse
+    m_Type: 2
+    m_ExpectedControlType: Vector2
+    m_Id: d08a37ed-11ce-461c-a2fd-a81a8876a67e
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: One Modifier
+      m_Id: 9c908598-5573-4abb-825b-b19faabd5951
+      m_Path: OneModifier
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Collapse
+      m_Flags: 4
+    - m_Name: modifier
+      m_Id: acad0b0a-6f61-43f6-8388-30b37e876132
+      m_Path: <Mouse>/leftButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Collapse
+      m_Flags: 8
+    - m_Name: binding
+      m_Id: c4d6d0c4-a427-4b82-98aa-3fa2175009e5
+      m_Path: <Mouse>/position
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Collapse
+      m_Flags: 8
+    m_Flags: 0
 --- !u!483693784 &1244263311
 TilemapRenderer:
   m_ObjectHideFlags: 0
@@ -14107,7 +14261,19 @@ MonoBehaviour:
     m_ActionId: 6011dc17-ef0b-4df8-adfd-2bd3eb8e1da6
     m_ActionName: Player/Fire[/Mouse/leftButton]
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1244263310}
+        m_TargetAssemblyTypeName: WFC_TerrainGeneration, WFCAssembly
+        m_MethodName: CollapseCallBack
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 747f59e1-b978-4773-abaf-d42f8f05f625
     m_ActionName: Player/Collapse[/Mouse/leftButton,/Mouse/position]
   - m_PersistentCalls:
@@ -14188,6 +14354,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
+  - {fileID: 606882256}
   - {fileID: 104987959}
   - {fileID: 126972734}
   - {fileID: 1820809611}

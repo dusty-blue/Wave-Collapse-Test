@@ -23,8 +23,8 @@ public class WFC_TerrainGeneration : MonoBehaviour
     private Dictionary<string, State> stateDic;
     [SerializeField]  private List<State> stateList;
     [SerializeField] private State initialState;
-    [SerializeField] private WaveCollapseInputActions InputActions;
-    private InputAction m_CollapseAction;
+    [SerializeField] private PlayerInput InputComp;
+    [SerializeField]  private InputAction m_CollapseAction;
     
     public TileBase defaultTile
     {
@@ -34,13 +34,11 @@ public class WFC_TerrainGeneration : MonoBehaviour
     void initStateDic ()
     {
         stateDic = new Dictionary<string, State>();
-
         List<NeighbourState> initList = new List<NeighbourState>(stateList.Count+1);
         stateDic.Add(initialState.m_name, initialState);
 
         foreach(State s in stateList)
         {
-            
             stateDic.Add(s.m_name, s);
         }
     }
@@ -48,14 +46,11 @@ public class WFC_TerrainGeneration : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
         initStateDic();
         m_WFCMatrix = new WFC_Matrix(area, new WFCTile(initialState), entropyThreshold);
         Tilemap tilemap = GetComponent<Tilemap>();
         TileBase[] tileArray = tilemap.GetTilesBlock(area);
-        InputActions = new WaveCollapseInputActions();
-        m_CollapseAction = InputActions.Player.Collapse;
-        m_CollapseAction.started += CollapseCallBack;
+        
     }
 
     // Update is called once per frame
@@ -82,16 +77,6 @@ public class WFC_TerrainGeneration : MonoBehaviour
             
         }
         m_WFCMatrix.clearQueue();
-        //newState = m_WFCMatrix.GetTile(lastPos).currentState;
-        //if (m_WFCMatrix.GetTile(lastPos).isImpossible)
-        //{
-
-        //    m_tilemap.SetTile(lastPos, impossibleTile);
-        //    impossibleTile.RefreshTile(lastPos, m_tilemap);
-        //}
-
-        //m_tilemap.SetTile(lastPos, newState.m_UnityTile);
-        //newState.m_UnityTile.RefreshTile(lastPos, m_tilemap);
     }
 
     public void ResetMatrix()
@@ -116,6 +101,23 @@ public class WFC_TerrainGeneration : MonoBehaviour
         }
         m_tilemap.SetTilesBlock(area, tileArray);
     }
+    private Vector3Int ConvertWorldToTileIndex(Vector3 worldPos)
+    {
+        Transform t = this.GetComponentInParent<Transform>();
+        Vector3 localPos = t.InverseTransformPoint(worldPos);
+        return m_tilemap.LocalToCell(localPos);
+    }
+    public void ResetTile(Vector3 worldPos )
+    {
+        Vector3Int cellPos = ConvertWorldToTileIndex(worldPos);
+        m_WFCMatrix.SetTile(cellPos, new WFCTile(initialState));
+    }
+
+    public void LockTile(Vector3 worldPos,float lockTime)
+    {
+        Vector3Int cellPos = ConvertWorldToTileIndex(worldPos);
+        StartCoroutine(m_WFCMatrix.LockTile(cellPos, lockTime));
+    }
 
     public void CollapseTile(Vector3 worldPos)
     {
@@ -128,9 +130,11 @@ public class WFC_TerrainGeneration : MonoBehaviour
 
     public void  CollapseCallBack (InputAction.CallbackContext context)
     {
-        Vector2 screenPos = context.ReadValue<Vector2>();
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y));
-        CollapseTile(worldPos);
+        if(context.started) {
+            Vector2 screenPos = context.ReadValue<Vector2>();
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y));
+            CollapseTile(worldPos);
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace Assets.Scripts.WFC
         protected AliasSampling rnd;
         public bool isNotCollapsed = true;
         public bool isImpossible = false;
+        public bool isLocked = false;
+        private float m_LockTimeRemaining = 0f;
         
         public WFCTile(NeighbourState[] states, State starting )
         {
@@ -27,6 +30,13 @@ namespace Assets.Scripts.WFC
             possibleStates = starting.m_allowedNeighbours;
             isImpossible = starting.m_allowedNeighbours.Length == 0;
             
+        }
+
+        public IEnumerator LockForSecs(float lockTime)
+        {
+            isLocked = true;
+            yield return new WaitForSeconds(lockTime);
+            isLocked = false;
         }
         public float getEntropy()
         {
