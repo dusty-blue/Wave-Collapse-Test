@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4db17137869dad4abec37d0a4138946, type: 3}
+  m_Name: Pond
+  m_EditorClassIdentifier: 
+  m_name: Pond
+  m_spawnWeight: 0.6
+  m_allowedNeighbours:
+  - {fileID: 11400000, guid: f77a4e8f36ba83c4dbb6334a06de4f61, type: 2}
+  - {fileID: 11400000, guid: df38b76b5805d6c4a81d072150044f19, type: 2}
+  m_Neighbourweight: []
+  m_UnityTile: {fileID: 11400000, guid: 49a998629c476ae418e911f4b1472260, type: 2}

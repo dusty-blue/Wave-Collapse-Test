@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0d183d4d5dc7f41a83d21ce00f7ec5, type: 3}
+  m_Name: TInit
+  m_EditorClassIdentifier: 
+  m_name: 
+  m_allowedNeighbours: []
+  m_Neighbourweight: []
+  m_UnityTile: {fileID: 11400000, guid: c0a4ed4383182a04e83bf92328a8b4cb, type: 2}
+  m_spawnWeight: 0
+  ThreeSocket: {fileID: 11400000, guid: 1f7060b339e3de94d8f826ffacbbfd2d, type: 2}
+  SingleSocket: {fileID: 11400000, guid: 2d99508101f34404586d26d68edae4fb, type: 2}

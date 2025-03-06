@@ -2,57 +2,41 @@ using Assets.Scripts.WFC;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Assets.Scripts.EditorTests;
 
 public class TileUnitTest
 {
     // A Test behaves as an ordinary method
     public class TestTile: WFCTile
     {
-        public TestTile(NeighbourState[] states, State starting) : base(states, starting)
+        public TestTile(State[] states, State starting) : base(states, starting)
         {
         }
     }
 
-    private Dictionary<String, State> SetupStates(List<String> stateNames)
-    {
-
-        StateLoader loader = new("Assets/Scripts/WFC/States/Test");
-        Dictionary<String, State> stateDic = loader.LoadStates(stateNames.ToArray());
-
-        return stateDic;
-    }
+    
     [Test]
     public void TileUnitTestSimplePasses()
     {
         // Use the Assert class to test conditions
 
         List<String> stateNames = new()
-        {
-            "NGrass",
-            "NShrubs",
-            "NTree"
-        };
-        Dictionary<String, State> stateDic = SetupStates(stateNames);
+        { "Tile Unit Test Cases"};
+        LoadedObjects loadedScriptableObjects = UnitTestUtility.SetupSidedStates(stateNames);
 
-        NeighbourState testNeighbour = ScriptableObject.CreateInstance<NeighbourState>();
-        testNeighbour.m_state = stateDic["NTree"];
+        WFCTile test01Tile = new WFCTile(loadedScriptableObjects.allStates,loadedScriptableObjects.allStates.First(s=> s.name=="T-Test01")); 
 
-        WFCTile grassTile = new WFCTile(stateDic["NTree"].m_allowedNeighbours, stateDic["NGrass"]); //[CreateAssetMenu(fileName = "Data", menuName = "WFC/State", order = 1)]
+        WFCTile test02Tile = new WFCTile(new State[0], loadedScriptableObjects.allStates.First(s => s.name == "T-Test02"));
+        Assert.AreEqual(float.MinValue, test02Tile.getEntropy());
+        Assert.AreEqual(0f, test01Tile.getEntropy(), 0.000001f);
 
-        WFCTile testTile = new WFCTile(new[]{ testNeighbour}, stateDic["NTree"]);
-        Assert.AreEqual(-0.2f, testTile.getEntropy());
-        Assert.AreEqual(0.7235767f, grassTile.getEntropy(), 0.000001f);
+        Assert.AreEqual(2, test01Tile.possibleStates.Length);
 
-        //fluxTile.updateStates(new[] { shrubs, trees });
-        Assert.Contains(stateDic["NTree"].m_allowedNeighbours[0],grassTile.possibleStates);
-        Assert.Contains(stateDic["NTree"].m_allowedNeighbours[1], grassTile.possibleStates);
-        Assert.AreEqual(2, grassTile.possibleStates.Length);
-
-        testTile.updateStates(new[] { ScriptableObject.CreateInstance<NeighbourState>() });
-        Assert.AreEqual(0, testTile.possibleStates.Length);
-        grassTile.SelectCurrentState();
-        Assert.AreNotEqual(testTile, grassTile.currentState);
+        Assert.AreEqual(0, test02Tile.possibleStates.Length);
+        test01Tile.SelectCurrentState();
+        Assert.AreNotEqual(test02Tile, test01Tile.currentState);
             
        }
 
@@ -60,34 +44,29 @@ public class TileUnitTest
     public void TryUpdateTests()
     {
         List<String> stateNames = new()
+            { "Tile Unit Test Cases"};
+        LoadedObjects loadedScriptableObjects = UnitTestUtility.SetupSidedStates(stateNames);
+
+        WFCTile test01Tile = new WFCTile(loadedScriptableObjects.allStates, loadedScriptableObjects.allStates.First(s => s.name == "T-Test01"));
+
+        WFCTile test02Tile = new WFCTile(loadedScriptableObjects.allStates, loadedScriptableObjects.allStates.First(s => s.name == "T-Test02"));
+
+        WFCSocket socket0101 = loadedScriptableObjects.allSockets.First(s => s.name == "01-01 Socket");
+        WFCSocket socket0102 = loadedScriptableObjects.allSockets.First(s => s.name == "01-02 Socket");
+
+        WFCSocket socket0202 = loadedScriptableObjects.allSockets.First(s => s.name == "02-02 Socket");
+        WFCSocket[][] testSocketArray = new WFCSocket[4][];
+        for (int i = 0; i < testSocketArray.Length; i++)
         {
-            "NGrass",
-            "NShrubs",
-            "NTree",
-            "Init"
-        };
-        Dictionary<String, State> stateDic = SetupStates(stateNames);
+            testSocketArray[i] = new WFCSocket[1];
+            testSocketArray[i][0] = socket0102;
+        }
 
-        NeighbourState testNeighbour = ScriptableObject.CreateInstance<NeighbourState>();
-        testNeighbour.m_state = stateDic["NTree"];
+        testSocketArray[0][0] = socket0202;
+        test02Tile.updateStates(testSocketArray);
+        Assert.AreEqual(1, test02Tile.possibleStates.Length);
+        Assert.AreEqual(loadedScriptableObjects.allStates.First(s => s.name == "T-Test02"), test02Tile.possibleStates[0]);
 
-        WFCTile initTile = new(stateDic["Init"]);
-        WFCTile grassTile = new (stateDic["NGrass"]);
-        WFCTile shrubTile = new(stateDic["NShrubs"]);
-
-        WFCTile impossibleTile = new(new NeighbourState[0], stateDic["Init"]);
-
-        Assert.IsTrue(grassTile.TryUpdateStates(grassTile.possibleStates));
-        Assert.IsFalse(initTile.TryUpdateStates(grassTile.possibleStates));
-        Assert.IsTrue(initTile.TryUpdateStates(grassTile.possibleStates));
-        Assert.AreEqual(float.MinValue, impossibleTile.getEntropy());
-        Assert.IsTrue(impossibleTile.isImpossible);
-
-        shrubTile.TryUpdateStates(new NeighbourState[0]);
-        Assert.IsTrue(shrubTile.isImpossible);
-        Assert.AreEqual(float.MinValue, shrubTile.getEntropy());
-
-        WFCTile startTile = new(stateDic["Init"]);
 
     }
 

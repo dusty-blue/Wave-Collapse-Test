@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0d183d4d5dc7f41a83d21ce00f7ec5, type: 3}
+  m_Name: Rock-TState
+  m_EditorClassIdentifier: 
+  m_name: 
+  allowedNeighbours: []
+  m_Neighbourweight: []
+  m_UnityTile: {fileID: 11400000, guid: 9904127e25bc2b54694159f275f5f6e7, type: 2}
+  m_spawnWeight: 0.3
+  wfcSockets:
+  - {fileID: 11400000, guid: 83eac5f9a9687c140a5d980bfeaddb96, type: 2}
+  - {fileID: 11400000, guid: c814c7e0bf7bae24bae09fea987f93f2, type: 2}
+  ThreeSocket: {fileID: 11400000, guid: 83eac5f9a9687c140a5d980bfeaddb96, type: 2}
+  SingleSocket: {fileID: 11400000, guid: c814c7e0bf7bae24bae09fea987f93f2, type: 2}

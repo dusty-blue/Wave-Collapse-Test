@@ -1,32 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 
 namespace Assets.Scripts.WFC
 {
-    [CreateAssetMenu(fileName = "Data", menuName = "WFC/State", order = 1)]
-    public class State :ScriptableObject
+    
+    public abstract class State :ScriptableObject
 
     {
-        //make scriptable object
-        public string m_name;
-        public float m_spawnWeight;
-        public NeighbourState[] m_allowedNeighbours;
-        public float[] m_Neighbourweight;
+        //public string m_name;
+        //public State[] allowedNeighbours;
+        //public float[] m_Neighbourweight;
         public TileBase m_UnityTile;
-        public bool Contains(State s)
-        {
-            foreach (NeighbourState n in m_allowedNeighbours)
-            {
-                if(n.m_state == s)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        public float m_spawnWeight;
+        
+        public List<WFCSocket> wfcSockets;
+        public WFCSocket[][] wfcPattern;
+        public abstract Boolean isPlaceable(WFCSocket[][] sockets);
+        public abstract WFCSocket[][] ReturnRotatedPlacement(WFCSocket[][] sockets);
+        
 
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.TerrainTools;
 
@@ -9,6 +11,8 @@ namespace Assets.Scripts.WFC
     public class WFC_Matrix : IWFC
     {
         protected WFCTile[,] TileMatrix;
+        protected List<WFCSocket>[,] SocketMatrix;
+        protected List<WFCSocket> allSockets;
 
         private float m_ET;
 
@@ -31,23 +35,61 @@ namespace Assets.Scripts.WFC
         {
             m_updateQueue.Clear();
         }
-        public WFC_Matrix(BoundsInt bounds, WFCTile defaultTile, float EntropyT)
+        public WFC_Matrix(BoundsInt bounds, WFCTile defaultTile, float EntropyT, List<WFCSocket> allSockets)
         {
             
             int xSize = Math.Abs(bounds.xMax - bounds.xMin);
             int ySize = Math.Abs(bounds.yMax - bounds.yMin);
+            this.allSockets = allSockets;
 
             TileMatrix = new WFCTile[xSize, ySize];
+            SocketMatrix = new List<WFCSocket>[(xSize+1)*2, ySize+1];
 
             SetAllTiles(defaultTile);
 
             entropyThreshold = EntropyT;
-            m_updateQueue = new();
+            m_updateQueue = new Queue<Vector3Int>();
         }
 
         public WFCTile GetTile(Vector3Int index)
         {
             return TileMatrix[index.x, index.y];
+        }
+
+        public WFCSocket[] GetSocket( int x, int y)
+        {
+            if (SocketMatrix[x , y] != null)
+            {
+                return SocketMatrix[x,y].ToArray();
+            }
+            else
+            {
+                return allSockets.ToArray();
+            }
+        }
+
+        public WFCSocket[][] GetSockets(Vector3Int index)
+        {
+            return GetSockets(new Vector2Int(index.x, index.y));
+        }
+
+        public WFCSocket[][] GetSockets(Vector2Int index)
+        {
+            WFCSocket[][] newSockets = new WFCSocket[4][];
+
+            newSockets[0] = GetSocket( index.x * 2, index.y);
+            newSockets[1] = GetSocket( index.x * 2 + 1, index.y + 1);
+            newSockets[2] = GetSocket( (index.x + 1) * 2, index.y);
+            newSockets[3] = GetSocket( index.x * 2 + 1, index.y);
+            return newSockets;
+        }
+
+        public void UpdateSockets(Vector2Int index, WFCSocket[][] newSockets)
+        {
+            SocketMatrix[index.x * 2, index.y] = newSockets[0].ToList();
+            SocketMatrix[index.x * 2 + 1, index.y + 1] = newSockets[1].ToList();
+            SocketMatrix[(index.x + 1) * 2, index.y] = newSockets[2].ToList();
+            SocketMatrix[index.x * 2 + 1, index.y] = newSockets[3].ToList();
         }
 
         private bool IsInBoundsX(int i)
@@ -160,7 +202,8 @@ namespace Assets.Scripts.WFC
             WFCTile tile = TileMatrix[index.x, index.y];
             foreach(Vector2Int v in getNeighbourIndices(index.x, index.y, 1))
             {
-                tile.TryUpdateStates(TileMatrix[v.x, v.y].currentState.m_allowedNeighbours);
+                tile.TryUpdateStates(GetSockets(index));
+                //TODO make directional
             }
         }
 
@@ -170,31 +213,40 @@ namespace Assets.Scripts.WFC
             return tile.LockForSecs(lockTime);
         }
 
-        public void CollapseTile(Vector2Int index, int passes, int radius, bool forceUpdate)
+        public void CollapseTile(Vector2Int index, int maxPasses, int radius, bool forceUpdate)
         {
             WFCTile currentTile = TileMatrix[index.x, index.y];
             if(currentTile.isLocked) { return; }
             
             Queue<Vector2Int> indexQueue = new();
             indexQueue.Enqueue(index);
+            /*Collapse the selected tile */
             if (currentTile.isNotCollapsed && (currentTile.getEntropy() < entropyThreshold || forceUpdate))
             {
+                //UpdateStates before this?
+                WFCSocket[][] currentSockets = GetSockets(index);
+                currentTile.updateStates(currentSockets);
                 currentTile.SelectCurrentState();
-                m_updateQueue.Enqueue( new Vector3Int(index.x, index.y, 0));
+                UpdateSockets(index, currentTile.currentState.ReturnRotatedPlacement(currentSockets));
+                
+                m_updateQueue.Enqueue(new(index.x, index.y, 0));
             }
 
+            /*Update all neighbour tiles*/
             WFCTile nTile;
-            int i = 0;
-            while (indexQueue.TryDequeue(out Vector2Int currentIndex) && i < passes)
+            int passes = 0;
+            // TODO currentTile.currentState.ReturnRotatedPlacement()
+            // Requires Neighbouring Sockets
+            while (indexQueue.TryDequeue(out Vector2Int currentIndex) && passes < maxPasses)
             {
-                i++;
+                passes++;
                 currentTile = TileMatrix[currentIndex.x, currentIndex.y];
                 foreach (Vector2Int v in getNeighbourIndices(currentIndex.x, currentIndex.y, radius))
                 {
                     nTile = TileMatrix[v.x, v.y];
-                    if (nTile.isNotCollapsed && !nTile.TryUpdateStates(currentTile.currentState.m_allowedNeighbours))
+                    if (nTile.isNotCollapsed && nTile.TryUpdateStates(GetSockets(v))) //&&!nTile.TryUpdateStates(currentTile.currentState.m_allowedNeighbours
                     {
-
+                        //TODO also update sockets
                         if (!indexQueue.Contains(v))
                         {
                             indexQueue.Enqueue(v);
@@ -203,6 +255,29 @@ namespace Assets.Scripts.WFC
 
                 }
             }
+
+        }
+
+        public int TransformIndicesToDirection(Vector2Int fromPoint, Vector2Int toPoint)
+        {
+            Vector2Int directionV = fromPoint - toPoint;
+            //directionV = directionV / (int)directionV.magnitude;
+            int directionArray = -1;
+            if (directionV.Equals(Vector2Int.up))
+            {
+                directionArray = 0;
+            } else if (directionV.Equals(Vector2Int.right))
+            {
+                directionArray = 1;
+            } else if (directionV.Equals(Vector2Int.down))
+            {
+                directionArray = 2;
+            }
+            else if (directionV.Equals(Vector2Int.left))
+            {
+                directionArray = 3;
+            }
+            return directionArray;
         }
     }
 }

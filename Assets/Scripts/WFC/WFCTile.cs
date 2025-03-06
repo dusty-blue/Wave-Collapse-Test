@@ -11,14 +11,14 @@ namespace Assets.Scripts.WFC
 
     {
         public State currentState;
-        public NeighbourState[] possibleStates;
+        public State[] possibleStates;
         protected AliasSampling rnd;
         public bool isNotCollapsed = true;
         public bool isImpossible = false;
         public bool isLocked = false;
         private float m_LockTimeRemaining = 0f;
         
-        public WFCTile(NeighbourState[] states, State starting )
+        public WFCTile( State[] states, State starting )
         {
             possibleStates = states;
             isImpossible = possibleStates.Length == 0;
@@ -27,8 +27,7 @@ namespace Assets.Scripts.WFC
         public WFCTile(State starting)
         {
             currentState = starting;
-            possibleStates = starting.m_allowedNeighbours;
-            isImpossible = starting.m_allowedNeighbours.Length == 0;
+            isImpossible = starting.wfcSockets.Count ==0;
             
         }
 
@@ -42,80 +41,93 @@ namespace Assets.Scripts.WFC
         {
             float sum = 0;
             float p =0;
-            if(possibleStates.Length ==1)
+            if (possibleStates != null)
             {
-                return -possibleStates[0].spawnWeight;
-            }else if (possibleStates.Length ==0)
+                if (possibleStates.Length == 0)
+                {
+                    return float.MinValue;
+                }
+                foreach (State s in possibleStates)
+                {
+                    p = s.m_spawnWeight;
+                    sum -= p * Mathf.Log(p, 2);
+                }
+            }
+            else
             {
                 return float.MinValue;
             }
-            foreach(NeighbourState s in possibleStates)
-            {
-                p = s.spawnWeight;
-                sum -= p* Mathf.Log(p,2);
-            }
+            
             return sum;
         }
-        public void updateStates(NeighbourState[] neighbours)
+        public void updateStates(WFCSocket[][] newSockets)
         {
-            List<NeighbourState> newList = new();
-            foreach (NeighbourState n in neighbours)
+            List<State> newList = new();
+            foreach (var s in possibleStates)
             {
-                foreach(NeighbourState s in possibleStates)
+                if (s.isPlaceable(newSockets))
                 {
-                    if(n.m_state == s.m_state)
-                    { 
-                        if ( n.spawnWeight <= s.spawnWeight)
-                        {
-                            newList.Add(n);
-                        }
-                        else
-                        {
-                            newList.Add(s);
-                        }
-                    }
+                    newList.Add(s);
                 }
             }
             possibleStates = newList.ToArray();
         }
-
-        public Boolean TryUpdateStates(NeighbourState[] neighbours)
+        /**Returns true  if new list is updated and not impossible
+         *
+         */
+        public Boolean TryUpdateStates(WFCSocket[][] newSockets)
         {
-            List<NeighbourState> newList = new();
-            foreach (NeighbourState n in neighbours)
+            List<State> newList = new();
+            foreach (var s in possibleStates)
             {
-                foreach (NeighbourState s in possibleStates)
+                if (s.isPlaceable(newSockets))
                 {
-                    if (n.m_state == s.m_state)
-                    {
-                        if (n.spawnWeight <= s.spawnWeight)
-                        {
-                            newList.Add(n);
-                        }
-                        else
-                        {
-                            newList.Add(s);
-                        }
-                    }
+                    newList.Add(s);
                 }
             }
-            foreach ( NeighbourState s in possibleStates)
-            {
-                if(!newList.Contains(s) )
-                {
-                    possibleStates = newList.ToArray();
-                    return false;
-                }
-            }
+
             if (newList.Count == 0)
             {
                 isImpossible = true;
                 possibleStates = newList.ToArray();
-                return true;
+                return false;
+            }
+            foreach ( State s in possibleStates)
+            {
+                //if something changed return true
+                if(!newList.Contains(s) )
+                {
+                    possibleStates = newList.ToArray();
+                    return true;
+                }
             }
 
             possibleStates = newList.ToArray();
-            return true;
+            return false;
+        }
+
+        public Boolean TryUpdateStates(WFCSocket[] newSockets, int direction)
+        {
+            WFCSocket[][] newDirectionSockets = new WFCSocket[4][];
+            for (int i = 0; i < newDirectionSockets.Length; i++)
+            {
+                if (i == direction)
+                {
+                    newDirectionSockets[i] = newSockets;
+                }
+                else
+                {
+                    List<WFCSocket> oldSockets = new(); 
+                    foreach (var possibleState in possibleStates)
+                    {
+                        oldSockets.AddRange(possibleState.wfcSockets);
+                    }
+
+                    newDirectionSockets[i] = oldSockets.ToArray();
+                }
+            }
+
+            return TryUpdateStates(newDirectionSockets);
         }
         public void SelectCurrentState()
         {
@@ -124,21 +136,32 @@ namespace Assets.Scripts.WFC
                 isNotCollapsed = false;
                 return;
             }
-            rnd = new AliasSampling(possibleStates.Select(x => x.spawnWeight).ToList<float>());
+            rnd = new AliasSampling(possibleStates.Select(x => x.m_spawnWeight).ToList<float>());
             int i = rnd.DrawSample();
             if(i<0)
             {
                 isImpossible = true;
                 return;
             }
-            currentState = possibleStates[i].m_state;
+            currentState = possibleStates[i];
 
             isNotCollapsed = false;
         }
 
         public WFCTile Clone()
         {
-            return (WFCTile)this.MemberwiseClone();
+            WFCTile clonedTile = (WFCTile)this.MemberwiseClone();
+            if (this.possibleStates != null)
+            {
+                State[] clonedArray = new State[this.possibleStates.Length];
+                for (int j = 0; j < this.possibleStates.Length; j++)
+                {
+                    clonedArray[j] = this.possibleStates[j];
+                }
+                clonedTile.possibleStates = clonedArray;
+            }
+            
+            return clonedTile;
         }
 
     }

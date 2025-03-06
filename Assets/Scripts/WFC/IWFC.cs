@@ -18,7 +18,7 @@ namespace Assets.Scripts.WFC
         public void SetAllTiles(WFCTile tile);
 
         public void SetTile(Vector3Int index, WFCTile tile);
-        public void CollapseTile(Vector2Int index, int passes ,int radius, bool forceUpdate);
+        public void CollapseTile(Vector2Int index, int maxPasses ,int radius, bool forceUpdate);
         }
     
 }

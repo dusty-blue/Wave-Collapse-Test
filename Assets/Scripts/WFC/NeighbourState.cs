@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using UnityEngine;
 
 
 namespace Assets.Scripts.WFC
@@ -12,6 +14,5 @@ namespace Assets.Scripts.WFC
         {
             get { return m_weight * m_state.m_spawnWeight; }
         }
-
     }
 }

@@ -9,7 +9,7 @@ using System;
 using UnityEditor;
 using System.IO;
 using UnityEngine.UIElements;
-
+using static Assets.Scripts.EditorTests.UnitTestUtility;
 public class StateUnitTest
 {
      
@@ -18,65 +18,23 @@ public class StateUnitTest
     public void StateUnitTestSimplePasses()
     {
         // Use the Assert class to test conditions
-        List<String> stateNames = new()
+        List<String> folderList = new()
         {
-            "NGrass",
-            "NShrubs",
-            "NTree"
+            "T-States"
         };
-        StateLoader loader = new("Assets/Scripts/WFC/States/Test");
-        Dictionary <String, State> stateDic = loader.LoadStates(stateNames.ToArray());
-        Assert.AreEqual(stateNames.Count, stateDic.Count);
+        LoadedObjects loadedScriptableObjects =SetupSidedStates(folderList);
+        Assert.AreEqual(3, loadedScriptableObjects.allStates.Length);
 
-        foreach(KeyValuePair<String,State> s in stateDic)
+        foreach (var currentState in loadedScriptableObjects.allStates)
         {
-            Assert.IsNotNull(s.Value.m_allowedNeighbours, $"Neighbours were null for {s.Key}");
-            Assert.IsTrue(s.Value.Contains(stateDic["NShrubs"]),$"Could not find Shrubs for state {s.Key}");        
+            foreach (var currentSocket in currentState.wfcSockets)
+            {
+
+                Assert.Contains(currentSocket, loadedScriptableObjects.allSockets, $"{currentSocket} from {currentState} not found in allSockets");
+            }
         }
-
-        //Assert.IsTrue(stateDic["NGrass"].m_allowedNeighbours[1].m_state.Contains(stateDic["NShrubs"]));
-
-        Dictionary<String,State> differentdic =loader.LoadStates(new[]
-        {
-            "Pond",
-            "Sand"
-        });
-        
-        // TO DO?
-        //grass.allowedNeighbours.Append(trees);
-        //
-        //Assert.AreEqual(3, grass.allowedNeighbours.Length);
-        //Assert.Contains(trees, grass.allowedNeighbours);        
-
-    }
-    [Test]
-    public void InitialTestSetup()
-    {
-        List<String> stateNames = new()
-        {
-            "NGrass",
-            "NShrubs",
-            "NTree",
-            "Sand",
-            "Pond"
-        };
-        StateLoader loader = new("Assets/Scripts/WFC/States/Test");
-        Dictionary<String, State> stateDic = loader.LoadStates(stateNames.ToArray());
-
-        List<NeighbourState> initList = new List<NeighbourState>(stateNames.Count);
-
-        //State initial = ScriptableObject.CreateInstance<State>();
-
-        //foreach (KeyValuePair<String,State> s in stateDic)
-        //{
-        //    NeighbourState ns = ScriptableObject.CreateInstance<NeighbourState>();
-        //    ns.m_state = s.Value;
-        //    ns.m_weight = 1f;
-        //    initList.Add(ns);
-
-        //    AssetDatabase.CreateAsset(ns, $"Assets/Scripts/WFC/States/Test/Init/{ns.m_state.m_name}Ninit.asset");
-        //}
-        //initial.m_allowedNeighbours = initList.ToArray();
-        //AssetDatabase.CreateAsset(initial, "Assets/Scripts/WFC/States/Test/Init/Init.asset");
+        State grass = loadedScriptableObjects.allStates.First(s => s.name == "TGrass");
+        Assert.AreEqual(2, grass.wfcSockets.Count);
+        Assert.AreEqual(4, grass.wfcPattern.Length);
     }
 }

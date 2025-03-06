@@ -2,6 +2,7 @@ using Assets.Scripts.WFC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -20,7 +21,7 @@ public class WFC_TerrainGeneration : MonoBehaviour
 
     private WFC_Matrix m_WFCMatrix;
 
-    private Dictionary<string, State> stateDic;
+    
     [SerializeField]  private List<State> stateList;
     [SerializeField] private State initialState;
     [SerializeField] private PlayerInput InputComp;
@@ -31,23 +32,32 @@ public class WFC_TerrainGeneration : MonoBehaviour
         get { return initialState.m_UnityTile; }
     }
 
-    void initStateDic ()
+    private List<WFCSocket> GenerateSocketList ()
     {
-        stateDic = new Dictionary<string, State>();
-        List<NeighbourState> initList = new List<NeighbourState>(stateList.Count+1);
-        stateDic.Add(initialState.m_name, initialState);
+        
+        List<WFCSocket> initList = new List<WFCSocket>(8);
 
         foreach(State s in stateList)
         {
-            stateDic.Add(s.m_name, s);
+            foreach (var socket in s.wfcSockets)
+            {
+                if (!initList.Contains(socket))
+                {
+                    initList.Add(socket);
+                    Debug.Log($"Capacity is {initList.Capacity} and Count is {initList.Count}");
+                }
+            }
         }
+        initList.TrimExcess();
+        return initList;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        initStateDic();
-        m_WFCMatrix = new WFC_Matrix(area, new WFCTile(initialState), entropyThreshold);
+        WFCTile initWfcTile = new WFCTile(stateList.ToArray(),initialState);
+
+        m_WFCMatrix = new WFC_Matrix(area, initWfcTile, entropyThreshold,GenerateSocketList());
         Tilemap tilemap = GetComponent<Tilemap>();
         TileBase[] tileArray = tilemap.GetTilesBlock(area);
         
@@ -73,15 +83,14 @@ public class WFC_TerrainGeneration : MonoBehaviour
                 m_tilemap.SetTile(pos, newState.m_UnityTile);
                 newState.m_UnityTile.RefreshTile(pos, m_tilemap);
             }
-
-            
         }
         m_WFCMatrix.clearQueue();
     }
 
     public void ResetMatrix()
     {
-        m_WFCMatrix.SetAllTiles(new WFCTile(initialState));
+        //TO DO Reset all Sockets as well
+        m_WFCMatrix.SetAllTiles(new WFCTile(stateList.ToArray(),initialState));
     }
 
     public void ResetMatrix(float newEntropy)

@@ -334,7 +334,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 12.42
+  orthographic size: 6.23
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -423,11 +423,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -11.56
+      value: -0.79
       objectReference: {fileID: 0}
     - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1587096649540347282, guid: bd789c168f6bced40bae3fe6a158cfa1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -536,7 +536,7 @@ MonoBehaviour:
   rock: {fileID: 21300000, guid: 6094e47cff81e234286f7ed0d62ebe64, type: 3}
   paper: {fileID: 21300000, guid: 6b4e24e05ae4ecb44b5cfc94ee57112f, type: 3}
   scissor: {fileID: 21300000, guid: 396878e29810bcf4dbecc2af2015b77b, type: 3}
-  entropyThreshold: 1.45
+  entropyThreshold: 0.4
   rockWeight: 0
   paperWeight: 0.001
   scissorWeight: 0.999
@@ -545,12 +545,9 @@ MonoBehaviour:
     m_Position: {x: 0, y: 0, z: 0}
     m_Size: {x: 50, y: 30, z: 1}
   stateList:
-  - {fileID: 11400000, guid: 46aa520f39331d7419f11936f38a34a3, type: 2}
-  - {fileID: 11400000, guid: 56bd488216993e44392a68ff7785b7fc, type: 2}
-  - {fileID: 11400000, guid: bda990bfe9fa4e9469521c67e2a96e05, type: 2}
-  - {fileID: 11400000, guid: 75f16cea2b1e723448eed8baa193a591, type: 2}
-  - {fileID: 11400000, guid: 10e92f9b742940d4aa0c35cb9cafb242, type: 2}
-  initialState: {fileID: 11400000, guid: c4488b97bcb55b04eb75a0fc48496560, type: 2}
+  - {fileID: 11400000, guid: 603586f9e984a6241b5b5aa01ed2ecd8, type: 2}
+  - {fileID: 11400000, guid: 68db2988d637fa14984a04fbb7fc032d, type: 2}
+  initialState: {fileID: 11400000, guid: 56e3d5f68c1b94b42a6ec7ccb4f24123, type: 2}
   InputComp: {fileID: 1820809613}
   m_CollapseAction:
     m_Name: Collapse

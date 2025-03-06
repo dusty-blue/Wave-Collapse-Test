@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0d183d4d5dc7f41a83d21ce00f7ec5, type: 3}
+  m_Name: T-State
+  m_EditorClassIdentifier: 
+  m_name: T-State
+  m_allowedNeighbours: []
+  m_Neighbourweight: []
+  m_UnityTile: {fileID: 11400000, guid: e17826094a94ea8489ed6f047f3dfc02, type: 2}
+  m_spawnWeight: 1
+  ThreeSocket: {fileID: 11400000, guid: c814c7e0bf7bae24bae09fea987f93f2, type: 2}
+  SingleSocket: {fileID: 11400000, guid: 55aaedd62fa33334186b52481d9ec2ca, type: 2}

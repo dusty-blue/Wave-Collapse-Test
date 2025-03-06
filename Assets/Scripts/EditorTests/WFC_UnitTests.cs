@@ -1,17 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.WFC;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using static UnityEngine.UI.Image;
+using static Assets.Scripts.EditorTests.UnitTestUtility;
 
 public class WFC_UnitTests
 {
     public class TestMatrix : WFC_Matrix
     {
-        public TestMatrix(BoundsInt bounds, WFCTile defaultTile, float EntropyT) : base(bounds, defaultTile, EntropyT) { }
+        public TestMatrix(BoundsInt bounds, WFCTile defaultTile, float EntropyT, List<WFCSocket> allSockets) : base(bounds, defaultTile, EntropyT, allSockets) { }
 
         public void TestSize(Vector3Int size)
         {
@@ -38,7 +40,7 @@ public class WFC_UnitTests
         {
             foreach(WFCTile t in TileMatrix)
             {
-                Assert.AreEqual(s, t.currentState, $"expected: {s.m_name} actual:{t.currentState.m_name}");
+                Assert.AreEqual(s, t.currentState, $"expected: {s.name} actual:{t.currentState.name}");
             }
             
         }
@@ -47,21 +49,12 @@ public class WFC_UnitTests
         {
             foreach (WFCTile t in TileMatrix)
             {
-                Assert.AreNotEqual(s, t.currentState, $"not this: {s.m_name} actual:{t.currentState.m_name}");
+                Assert.AreNotEqual(s, t.currentState, $"not this: {s.name} actual:{t.currentState.name}");
             }
         }
     }
 
-    private Dictionary<String, State> SetupStates(List<String> stateNames)
-    {
-        
-        StateLoader loader = new("Assets/Scripts/WFC/States/Test");
-        Dictionary<String, State> stateDic = loader.LoadStates(stateNames.ToArray());
-
-        return stateDic;
-    }
-
-
+    
     // A Test behaves as an ordinary method
     [Test]
     public void WFC_UnitTestsSimpleBound()
@@ -70,14 +63,12 @@ public class WFC_UnitTests
         Vector3Int pos = new Vector3Int(0, 0, 0);
         Vector3Int size = new Vector3Int(2, 2, 1);
         BoundsInt bounds = new BoundsInt(pos, size);
-        List<String> stateNames =  new()
+        List<String> folderList =  new()
         {
-            "NGrass",
-            "NShrubs",
-            "NTree"
+            "T-States"
         };
-        Dictionary<String, State> stateDic = SetupStates(stateNames);
-        TestMatrix testM = new TestMatrix(bounds,new WFCTile(stateDic["NGrass"]),2f);
+        LoadedObjects loadedScriptableObjects = SetupSidedStates(folderList);
+        TestMatrix testM = new TestMatrix(bounds,new WFCTile(loadedScriptableObjects.allStates.First(s => s.name=="TInit")),2f, loadedScriptableObjects.allSockets.ToList());
         testM.TestSize(size);
                 
     }
@@ -89,14 +80,12 @@ public class WFC_UnitTests
         Vector3Int pos = new Vector3Int(-10, -10, -10);
         Vector3Int size = new Vector3Int(2, 5, 1);
         BoundsInt bounds = new BoundsInt(pos, size);
-        List<String> stateNames = new()
+        List<String> folderList = new()
         {
-            "NGrass",
-            "NShrubs",
-            "NTree"
+            "T-States"
         };
-        Dictionary<String, State> stateDic = SetupStates(stateNames);
-        TestMatrix testM = new TestMatrix(bounds, new WFCTile(stateDic["NGrass"]), 2f);
+        LoadedObjects loadedScriptableObjects = SetupSidedStates(folderList);
+        TestMatrix testM = new TestMatrix(bounds, new WFCTile(loadedScriptableObjects.allStates.First(s => s.name == "TInit")), 2f, loadedScriptableObjects.allSockets.ToList());
 
         testM.TestSize(size);
 
@@ -107,14 +96,13 @@ public class WFC_UnitTests
     {
         Vector3Int pos = new Vector3Int(0, 0, 0);
         Vector3Int size = new Vector3Int(2, 2, 1);
-        BoundsInt bounds = new BoundsInt(pos, size); List<String> stateNames = new()
+        BoundsInt bounds = new BoundsInt(pos, size);
+        List<String> folderList = new()
         {
-            "NGrass",
-            "NShrubs",
-            "NTree"
+            "T-States"
         };
-        Dictionary<String, State> stateDic = SetupStates(stateNames);
-        TestMatrix testM = new TestMatrix(bounds, new WFCTile(stateDic["NGrass"]), 2f);
+        LoadedObjects loadedScriptableObjects = SetupSidedStates(folderList);
+        TestMatrix testM = new TestMatrix(bounds, new WFCTile(loadedScriptableObjects.allStates.First(s => s.name == "TInit")), 2f, loadedScriptableObjects.allSockets.ToList());
 
         testM.TestIsInBounds(0, 0, true);
         testM.TestIsInBounds(1, 1, true);
@@ -129,14 +117,13 @@ public class WFC_UnitTests
     {
         Vector3Int pos = new Vector3Int(0, 0, 0);
         Vector3Int size = new Vector3Int(2, 2, 1);
-        BoundsInt bounds = new BoundsInt(pos, size); List<String> stateNames = new()
+        BoundsInt bounds = new BoundsInt(pos, size);
+        List<String> folderList = new()
         {
-            "NGrass",
-            "NShrubs",
-            "NTree"
+            "T-States"
         };
-        Dictionary<String, State> stateDic = SetupStates(stateNames);
-        TestMatrix testM = new TestMatrix(bounds, new WFCTile(stateDic["NGrass"]), 0.3f);
+        LoadedObjects loadedScriptableObjects = SetupSidedStates(folderList);
+        TestMatrix testM = new TestMatrix(bounds, new WFCTile(loadedScriptableObjects.allStates.First(s => s.name == "TInit")), 2f, loadedScriptableObjects.allSockets.ToList());
 
 
         testM.TestNeighbours(0, 0,1, 3);
@@ -145,8 +132,8 @@ public class WFC_UnitTests
         Vector3Int pos2 = new Vector3Int(0, 0, 0);
         Vector3Int size2 = new Vector3Int(10, 10, 1);
         BoundsInt bounds2 = new BoundsInt(pos2, size2);
-
-        TestMatrix testM2 = new TestMatrix(bounds2, new WFCTile(stateDic["NGrass"]), 0.3f);
+        //TODO replace empty List iwth allsockets list
+        TestMatrix testM2 = new TestMatrix(bounds2, new WFCTile(loadedScriptableObjects.allStates.First(s => s.name == "TGrass")), 0.3f, loadedScriptableObjects.allSockets.ToList());
         testM2.TestNeighbours(0, 0, 1, 3);
         testM2.TestNeighbours(1, 1, 1, 8);
         testM2.TestNeighbours(0, 2, 1, 5);
@@ -166,18 +153,16 @@ public class WFC_UnitTests
         Vector3Int pos = new Vector3Int(0, 0, 0);
         Vector3Int size = new Vector3Int(2, 2, 1);
         BoundsInt bounds = new BoundsInt(pos, size);
-        List<String> stateNames = new()
+        List<String> folderList = new()
         {
-            "NGrass",
-            "NShrubs",
-            "NTree"
+            "T-States"
         };
-        Dictionary<String, State> stateDic = SetupStates(stateNames);
-        TestMatrix testM = new TestMatrix(bounds, new WFCTile(stateDic["NGrass"]), 0.3f);
+        LoadedObjects loadedScriptableObjects = SetupSidedStates(folderList);
+        TestMatrix testM = new TestMatrix(bounds, new WFCTile(loadedScriptableObjects.allStates.First(s => s.name == "TInit")), 2f, loadedScriptableObjects.allSockets.ToList());
 
         WFCTile origin = testM.GetTile(new Vector3Int(0,0,0));
 
-        Assert.AreEqual(stateDic["NGrass"], origin.currentState);
+        Assert.AreEqual(loadedScriptableObjects.allStates.First(s => s.name== "TInit"), origin.currentState);
     }
 
     [Test]
